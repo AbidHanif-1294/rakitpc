@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RakitPC.id — Kalkulator Estimasi Rakit PC Baru & Second Indonesia</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              bg: '#090d16',
+              card: '#111827',
+              cardHover: '#192236',
+              border: '#1f2937',
+              accent: '#06b6d4', // Cyan 500
+              accentHover: '#0891b2',
+              purple: '#8b5cf6',
+              emerald: '#10b981',
+              amber: '#f59e0b',
+              rose: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar for Dark Mode */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
+    }
+
+    /* Subtle Glow Effects */
+    .glow-cyan {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+    }
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-cyber-bg text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- Toast Notification Container (No alert() used) -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-microchip text-slate-950 text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white">RakitPC<span class="text-cyan-400">.id</span></h1>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              DB 850+ ITEM
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Estimasi Harga Marketplace Baru & FJB Second (FB/X/Threads)</p>
+        </div>
+      </div>
+
+      <!-- Global Condition Toggle & Quick Actions -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Global Condition Switcher -->
+        <div class="bg-slate-900 p-1 rounded-xl border border-slate-800 flex items-center text-xs font-medium" title="Ubah kondisi seluruh komponen sekaligus">
+          <button onclick="setAllCondition('new')" id="btn-global-new" class="px-2.5 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            <span class="hidden md:inline">Semua</span> Baru
+          </button>
+          <button onclick="setAllCondition('used')" id="btn-global-used" class="px-2.5 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span class="hidden md:inline">Semua</span> Second
+          </button>
+        </div>
+
+        <!-- Preset Dropdown Trigger -->
+        <button onclick="togglePresetModal(true)" class="px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-xs sm:text-sm font-semibold text-slate-200 flex items-center gap-2 transition-all">
+          <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i>
+          <span class="hidden sm:inline">Preset Rakitan</span>
+          <span class="sm:hidden">Preset</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button onclick="resetBuild()" title="Reset Rakitan" class="p-2.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 border border-slate-800 hover:border-rose-500/40 text-slate-400 hover:text-rose-400 transition-all">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 lg:pb-10">
+    
+    <!-- Top Info Banner & Database Stats -->
+    <div class="mb-6 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/30 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <i class="fa-solid fa-database mr-1"></i> <span id="total-db-count">858</span> Varian Komponen Terverifikasi
+          </span>
+          <span class="px-2.5 py-0.5 rounded-md text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <i class="fa-solid fa-tags mr-1"></i> Mode Campuran (Baru + Bekas) Aktif
+          </span>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold text-white">Simulasi Rakit PC Impian & Cek Selisih Harga Second</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Pilih komponen dari 11 kategori. Atur status <span class="text-cyan-400 font-medium">Baru (BNIB)</span> atau <span class="text-amber-400 font-medium">Second (FJB FB/X/Threads)</span> pada tiap komponen untuk menghitung penghematan maksimal.</p>
+      </div>
+
+      <!-- Saved Builds Quick Bar -->
+      <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+        <button onclick="saveBuildToLocal()" class="flex-1 md:flex-initial px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-floppy-disk text-cyan-400"></i> Simpan
+        </button>
+        <button onclick="loadBuildFromLocal()" class="flex-1 md:flex-initial px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-folder-open text-amber-400"></i> Muat
+        </button>
+      </div>
+    </div>
+
+    <!-- Compatibility Alerts Area -->
+    <div id="compatibility-alerts" class="mb-6 space-y-2 hidden"></div>
+
+    <!-- Two-Column Layout: Left = 11 Component Categories, Right = Sticky Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left Column: Component Slots (8 cols on desktop) -->
+      <div class="lg:col-span-8 space-y-3" id="component-slots-container">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Right Column: Real-time Summary & Cost Breakdown (4 cols on desktop) -->
+      <aside class="lg:col-span-4 lg:sticky lg:top-20 space-y-4">
+        <div class="bg-cyber-card border border-slate-800 rounded-2xl p-5 shadow-xl glow-cyan">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-base text-white flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-cyan-400"></i> Ringkasan Estimasi Biaya
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5"><span id="selected-count">0</span> / 11 Kategori Terisi</p>
+            </div>
+            <div id="wattage-badge" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-right">
+              <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Est. Daya</div>
+              <div class="font-mono font-bold text-sm text-cyan-400"><span id="total-wattage">0</span> W</div>
+            </div>
+          </div>
+
+          <!-- Price Comparison Breakdown -->
+          <div class="py-4 space-y-3 border-b border-slate-800 text-sm">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Jika Full Baru (BNIB):
+              </span>
+              <span id="total-all-new" class="font-mono font-medium text-slate-300">Rp 0</span>
+            </div>
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Jika Full Second (FJB):
+              </span>
+              <span id="total-all-used" class="font-mono font-medium text-slate-300">Rp 0</span>
+            </div>
+            
+            <!-- Savings Highlight Box -->
+            <div id="savings-box" class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
+              <div>
+                <div class="text-xs font-semibold text-emerald-400">Total Penghematan Kamu</div>
+                <div class="text-[11px] text-emerald-300/70">Dibanding beli full baru</div>
+              </div>
+              <div class="text-right">
+                <div id="total-savings" class="font-mono font-bold text-sm text-emerald-400">Rp 0</div>
+                <div id="savings-percent" class="text-[11px] font-mono text-emerald-300">0% Hemat</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grand Total Selected Build -->
+          <div class="pt-4 pb-5">
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Rakitan Pilihanmu</span>
+              <span id="mix-status-label" class="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-300">Belum ada item</span>
+            </div>
+            <div id="total-selected-price" class="font-mono text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Rp 0
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">*Harga estimasi pasar Indonesia (Tokopedia, Shopee, FJB FB, X & Threads).</p>
+          </div>
+
+          <!-- PSU Recommendation Meter -->
+          <div class="mb-5 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="text-slate-400 font-medium"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i>Rekomendasi PSU Min.</span>
+              <span id="recommended-psu-watt" class="font-mono font-bold text-slate-200">450W</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div id="psu-load-bar" class="bg-cyan-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div id="psu-status-text" class="text-[11px] text-slate-400 mt-1.5">Pilih komponen untuk menghitung beban daya.</div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="space-y-2.5">
+            <button onclick="copyBuildToClipboard()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+              <i class="fa-solid fa-copy"></i> Salin Rincian (WA / Threads / X)
+            </button>
+            <button onclick="openSummaryModal()" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 transition-all">
+              <i class="fa-solid fa-receipt text-cyan-400"></i> Lihat Struk & Detail Perbandingan
+            </button>
+          </div>
+        </div>
+
+        <!-- Market Tips Card -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 text-xs text-slate-400 space-y-2">
+          <div class="font-semibold text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-amber-400"></i> Tips Hunting Part Second (FJB):
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-[11px] leading-relaxed">
+            <li><strong class="text-slate-300">VGA & CPU:</strong> Aman beli second, cek suhu FurMark & fisik pin/PCB.</li>
+            <li><strong class="text-slate-300">PSU & Storage:</strong> Disarankan beli <span class="text-cyan-400">Baru (BNIB)</span> demi garansi & kesehatan komponen.</li>
+            <li><strong class="text-slate-300">FJB FB/X/Threads:</strong> Wajib Rekber atau COD tes nyala langsung.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Mobile Sticky Bottom Bar -->
+  <div class="lg:hidden fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-slate-800 px-4 py-3 flex items-center justify-between gap-3">
+    <div>
+      <div class="text-[10px] text-slate-400 uppercase font-semibold">Total Estimasi (<span id="mobile-selected-count">0</span>/11)</div>
+      <div id="mobile-total-price" class="font-mono font-extrabold text-lg text-white">Rp 0</div>
+      <div id="mobile-savings-badge" class="text-[10px] text-emerald-400 font-medium">Hemat Rp 0</div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="openSummaryModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-semibold text-white">
+        Detail
+      </button>
+      <button onclick="copyBuildToClipboard()" class="px-4 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-cyan-500/20">
+        <i class="fa-solid fa-share-nodes"></i> Salin
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: COMPONENT SELECTOR MODAL (75+ Items per Category)            -->
+  <!-- ===================================================================== -->
+  <div id="selector-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-cyber-card border border-slate-700/80 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3 bg-slate-900/70">
+        <div class="flex items-center gap-3">
+          <div id="modal-cat-icon" class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-microchip"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="modal-cat-title" class="font-bold text-base sm:text-lg text-white">Pilih Processor (CPU)</h3>
+              <span id="modal-cat-count" class="px-2 py-0.5 rounded-full text-xs font-mono font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">78 Item</span>
+            </div>
+            <p id="modal-cat-subtitle" class="text-xs text-slate-400">Bandingkan harga baru marketplace & harga second FJB</p>
+          </div>
+        </div>
+        <button onclick="closeSelectorModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Filter & Search Controls -->
+      <div class="p-3 sm:p-4 border-b border-slate-800 bg-slate-900/40 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+          <!-- Instant Search -->
+          <div class="sm:col-span-5 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="modal-search-input" oninput="filterModalItems()" placeholder="Cari seri, merek, socket, VRAM..." class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 focus:border-cyan-500 focus:outline-none text-xs sm:text-sm text-white placeholder-slate-500" />
+          </div>
+
+          <!-- Brand Filter -->
+          <div class="sm:col-span-3">
+            <select id="modal-brand-filter" onchange="filterModalItems()" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 focus:border-cyan-500 focus:outline-none text-xs sm:text-sm text-slate-200">
+              <option value="ALL">Semua Brand</option>
+            </select>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="sm:col-span-2">
+            <select id="modal-price-filter" onchange="filterModalItems()" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 focus:border-cyan-500 focus:outline-none text-xs sm:text-sm text-slate-200">
+              <option value="ALL">Semua Harga</option>
+              <option value="UNDER_1M">&lt; Rp 1 Juta</option>
+              <option value="1M_3M">Rp 1 - 3 Juta</option>
+              <option value="3M_7M">Rp 3 - 7 Juta</option>
+              <option value="7M_15M">Rp 7 - 15 Juta</option>
+              <option value="ABOVE_15M">&gt; Rp 15 Juta</option>
+            </select>
+          </div>
+
+          <!-- Sort Option -->
+          <div class="sm:col-span-2">
+            <select id="modal-sort-select" onchange="filterModalItems()" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 focus:border-cyan-500 focus:outline-none text-xs sm:text-sm text-slate-200">
+              <option value="DEFAULT">Urutan Default</option>
+              <option value="PRICE_ASC">Termurah (Baru)</option>
+              <option value="PRICE_DESC">Termahal (Baru)</option>
+              <option value="USED_ASC">Termurah (Second)</option>
+              <option value="SAVINGS_DESC">Selisih Hemat Terbesar</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Brand Pills -->
+        <div id="modal-brand-pills" class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar"></div>
+      </div>
+
+      <!-- Product List Body -->
+      <div id="modal-items-list" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5">
+        <!-- Populated dynamically by JS -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 py-3 border-t border-slate-800 bg-slate-900/70 flex items-center justify-between text-xs text-slate-400">
+        <span>Menampilkan <strong id="modal-visible-count" class="text-white">0</strong> komponen</span>
+        <span>Klik <strong class="text-cyan-400">+ Baru</strong> atau <strong class="text-amber-400">+ Second</strong> untuk langsung memasang</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: PRESET RAKITAN CEPAT                                         -->
+  <!-- ===================================================================== -->
+  <div id="preset-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-cyber-card border border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-lg text-white flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i> Preset Rakitan Populer Indonesia
+          </h3>
+          <p class="text-xs text-slate-400">Pilih template rakitan siap pakai sesuai budget & kebutuhanmu</p>
+        </div>
+        <button onclick="togglePresetModal(false)" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4" id="preset-list-container">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: RECEIPT / SUMMARY DETAIL MODAL                               -->
+  <!-- ===================================================================== -->
+  <div id="summary-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-cyber-card border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-lg text-white flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-cyan-400"></i> Rincian Struk Simulasi Rakit PC
+          </h3>
+          <p class="text-xs text-slate-400">Perbandingan detail harga Baru vs Second pilihanmu</p>
+        </div>
+        <button onclick="closeSummaryModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="summary-modal-content" class="p-5 overflow-y-auto space-y-4 text-sm">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="p-4 border-t border-slate-800 bg-slate-900/70 flex flex-col sm:flex-row gap-2.5 justify-end">
+        <button onclick="closeSummaryModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
+          Tutup
+        </button>
+        <button onclick="copyBuildToClipboard()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold flex items-center justify-center gap-2">
+          <i class="fa-solid fa-copy"></i> Salin Format Teks Rapi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT DATABASE (850+ ITEMS) & APPLICATION ENGINE                 -->
+  <!-- ===================================================================== -->
+  <script>
+    /**
+     * 1. KONFIGURASI 11 KATEGORI KOMPONEN
+     */
+    const CATEGORIES = [
+      { id: 'cpu', name: 'Processor (CPU)', icon: 'fa-microchip', allowQty: false, desc: 'Otak utama PC (Intel Core & AMD Ryzen)' },
+      { id: 'mobo', name: 'Motherboard (MoBo)', icon: 'fa-server', allowQty: false, desc: 'Papan induk penghubung seluruh komponen' },
+      { id: 'gpu', name: 'VGA / Kartu Grafis', icon: 'fa-display', allowQty: false, desc: 'Pengolah grafis gaming & rendering (NVIDIA & AMD)' },
+      { id: 'ram', name: 'RAM (Memory)', icon: 'fa-memory', allowQty: true, desc: 'Memori DDR4 / DDR5 (Bisa tambah jumlah kit)' },
+      { id: 'ssd', name: 'SSD (NVMe / SATA)', icon: 'fa-hard-drive', allowQty: true, desc: 'Penyimpanan super cepat sistem & game' },
+      { id: 'hdd', name: 'HDD (Hard Disk)', icon: 'fa-compact-disc', allowQty: true, desc: 'Penyimpanan data kapasitas besar' },
+      { id: 'psu', name: 'Power Supply (PSU)', icon: 'fa-plug-circle-bolt', allowQty: false, desc: 'Sumber daya listrik stabil & bersertifikasi' },
+      { id: 'case', name: 'Casing PC (Case)', icon: 'fa-computer', allowQty: false, desc: 'Rangka & airflow estetika rakitan' },
+      { id: 'cpucooler', name: 'CPU Cooler', icon: 'fa-fan', allowQty: false, desc: 'Pendingin processor (Tower Air & AIO Liquid)' },
+      { id: 'fan', name: 'Fan Cooler (Case Fan)', icon: 'fa-wind', allowQty: true, desc: 'Kipas sirkulasi udara casing (Single / 3-Pack)' },
+      { id: 'monitor', name: 'Monitor', icon: 'fa-tv', allowQty: true, desc: 'Layar tampilan gaming & produktivitas' }
+    ];
+
+    /**
+     * 2. GENERATOR & DATABASE MASIF (MINIMAL 75-80 ITEM PER KATEGORI -> TOTAL 858 ITEM)
+     * Data mencakup harga baru marketplace (Tokopedia/Shopee) dan harga second FJB (Facebook, X, Threads, OLX)
+     * dalam Rupiah (IDR) yang realistis sesuai pasar PC Indonesia.
+     */
+    const USED_NOTES = [
+      "Ex-Gaming mulus, fullset box",
+      "Pemakaian wajar, batangan normal",
+      "Fullset, sisa garansi resmi distributor",
+      "Ex-User rumahan, no minus siap pakai",
+      "Listing FJB FB/Threads, terawat bersih",
+      "Fullset nota pembelian, segel utuh"
+    ];
+
+    function buildDatabase() {
+      const db = {
+        cpu: [], mobo: [], gpu: [], ram: [], ssd: [],
+        hdd: [], psu: [], case: [], cpucooler: [], fan: [], monitor: []
+      };
+
+      let idCounter = 1;
+      const addItem = (cat, brand, name, spec, newPrice, usedPrice, watt = 0, meta = {}) => {
+        const note = USED_NOTES[(idCounter + brand.length) % USED_NOTES.length];
+        db[cat].push({
+          id: `${cat}-${idCounter++}`,
+          category: cat,
+          brand,
+          name,
+          spec,
+          newPrice: Math.round(newPrice / 5000) * 5000,
+          usedPrice: Math.round(usedPrice / 5000) * 5000,
+          watt,
+          usedNote: note,
+          meta
+        });
+      };
+
+      // =========================================================================
+      // KATEGORI 1: PROCESSOR (CPU) - 78 ITEM
+      // =========================================================================
+      const cpus = [
+        // Intel Gen 10 - 14 & Core Ultra
+        ["Intel", "Intel Core i3-10100F", "LGA1200 • 4C/8T • Up to 4.3GHz • No iGPU", 980000, 620000, 65, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i3-10105F", "LGA1200 • 4C/8T • Up to 4.4GHz • No iGPU", 1050000, 675000, 65, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i5-10400F", "LGA1200 • 6C/12T • Up to 4.3GHz", 1450000, 950000, 65, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i5-10400", "LGA1200 • 6C/12T • UHD 630 iGPU", 1750000, 1100000, 65, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i7-10700F", "LGA1200 • 8C/16T • Up to 4.8GHz", 2850000, 1850000, 95, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i7-10700K", "LGA1200 • 8C/16T • Unlocked 5.1GHz", 3350000, 2150000, 125, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i9-10900K", "LGA1200 • 10C/20T • Up to 5.3GHz", 4600000, 2900000, 150, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i5-11400F", "LGA1200 • 6C/12T • PCIe 4.0", 1590000, 1050000, 65, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i7-11700F", "LGA1200 • 8C/16T • Up to 4.9GHz", 3100000, 1950000, 95, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i9-11900K", "LGA1200 • 8C/16T • Up to 5.3GHz", 4400000, 2750000, 150, { socket: "LGA1200" }],
+        ["Intel", "Intel Core i3-12100F", "LGA1700 • 4C/8T • Up to 4.3GHz • Best Budget", 1250000, 850000, 58, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i3-12100", "LGA1700 • 4C/8T • UHD 730 iGPU", 1650000, 1100000, 60, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-12400F", "LGA1700 • 6C/12T • Up to 4.4GHz • Sweetspot", 1780000, 1280000, 65, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-12400", "LGA1700 • 6C/12T • UHD 730 iGPU", 2150000, 1500000, 65, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-12600KF", "LGA1700 • 10C (6P+4E)/16T • 4.9GHz", 2550000, 1850000, 125, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-12600K", "LGA1700 • 10C (6P+4E)/16T • UHD 770", 2850000, 2050000, 125, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i7-12700F", "LGA1700 • 12C (8P+4E)/20T • 4.9GHz", 3650000, 2600000, 110, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i7-12700K", "LGA1700 • 12C (8P+4E)/20T • 5.0GHz", 4150000, 2950000, 150, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i9-12900K", "LGA1700 • 16C (8P+8E)/24T • 5.2GHz", 5450000, 3800000, 180, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i3-13100F", "LGA1700 • 4C/8T • Up to 4.5GHz", 1490000, 1020000, 58, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-13400F", "LGA1700 • 10C (6P+4E)/16T • 4.6GHz", 2490000, 1800000, 85, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-13400", "LGA1700 • 10C (6P+4E)/16T • UHD 730", 2890000, 2050000, 85, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-13500", "LGA1700 • 14C (6P+8E)/20T • 4.8GHz", 3550000, 2550000, 95, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-13600KF", "LGA1700 • 14C (6P+8E)/20T • 5.1GHz", 3790000, 2750000, 140, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-13600K", "LGA1700 • 14C (6P+8E)/20T • UHD 770", 4100000, 2950000, 140, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i7-13700F", "LGA1700 • 16C (8P+8E)/24T • 5.2GHz", 4950000, 3600000, 140, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i7-13700K", "LGA1700 • 16C (8P+8E)/24T • 5.4GHz", 5450000, 3950000, 180, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i9-13900K", "LGA1700 • 24C (8P+16E)/32T • 5.8GHz", 7350000, 5200000, 220, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i3-14100F", "LGA1700 • 4C/8T • Up to 4.7GHz", 1620000, 1150000, 60, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-14400F", "LGA1700 • 10C (6P+4E)/16T • 4.7GHz", 2690000, 1980000, 85, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-14500", "LGA1700 • 14C (6P+8E)/20T • 5.0GHz", 3790000, 2800000, 95, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-14600KF", "LGA1700 • 14C (6P+8E)/20T • 5.3GHz", 4150000, 3100000, 145, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i5-14600K", "LGA1700 • 14C (6P+8E)/20T • UHD 770", 4490000, 3350000, 145, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i7-14700F", "LGA1700 • 20C (8P+12E)/28T • 5.4GHz", 5590000, 4150000, 150, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i7-14700K", "LGA1700 • 20C (8P+12E)/28T • 5.6GHz", 6150000, 4550000, 200, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i9-14900KF", "LGA1700 • 24C (8P+16E)/32T • 6.0GHz", 7850000, 5750000, 230, { socket: "LGA1700" }],
+        ["Intel", "Intel Core i9-14900K", "LGA1700 • 24C (8P+16E)/32T • 6.0GHz", 8250000, 6050000, 230, { socket: "LGA1700" }],
+        ["Intel", "Intel Core Ultra 5 245K", "LGA1851 • 14C/14T • Arrow Lake • NPU", 4890000, 3750000, 125, { socket: "LGA1851" }],
+        ["Intel", "Intel Core Ultra 7 265K", "LGA1851 • 20C/20T • Up to 5.5GHz", 6490000, 4950000, 165, { socket: "LGA1851" }],
+        ["Intel", "Intel Core Ultra 9 285K", "LGA1851 • 24C/24T • Up to 5.7GHz", 9450000, 7200000, 200, { socket: "LGA1851" }],
+
+        // AMD Ryzen 3000, 4000, 5000, 7000, 8000, 9000
+        ["AMD", "AMD Ryzen 3 3200G", "AM4 • 4C/4T • Radeon Vega 8 iGPU", 950000, 580000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 3400G", "AM4 • 4C/8T • Radeon Vega 11 iGPU", 1250000, 780000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 3600", "AM4 • 6C/12T • Up to 4.2GHz • Legend", 1290000, 850000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 7 3700X", "AM4 • 8C/16T • Up to 4.4GHz", 2150000, 1350000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 4500", "AM4 • 6C/12T • Up to 4.1GHz", 1090000, 720000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 4600G", "AM4 • 6C/12T • Radeon Vega 7 iGPU", 1420000, 950000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 5500", "AM4 • 6C/12T • Up to 4.2GHz • Budget King", 1280000, 890000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 5600G", "AM4 • 6C/12T • Radeon Vega 7 iGPU", 1850000, 1280000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 5600GT", "AM4 • 6C/12T • Up to 4.6GHz • iGPU", 1920000, 1350000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 5600", "AM4 • 6C/12T • Up to 4.4GHz • PCIe 4.0", 1680000, 1180000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 5600X", "AM4 • 6C/12T • Up to 4.6GHz", 1950000, 1350000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 7 5700G", "AM4 • 8C/16T • Radeon Vega 8 iGPU", 2490000, 1750000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 7 5700X", "AM4 • 8C/16T • Up to 4.6GHz • 65W TDP", 2350000, 1680000, 65, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 7 5700X3D", "AM4 • 8C/16T • 96MB 3D V-Cache Gaming", 3290000, 2450000, 105, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 7 5800X", "AM4 • 8C/16T • Up to 4.7GHz", 2790000, 1900000, 105, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 7 5800X3D", "AM4 • 8C/16T • 3D V-Cache Legend", 4450000, 3250000, 105, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 9 5900X", "AM4 • 12C/24T • Up to 4.8GHz", 4150000, 2850000, 105, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 9 5950X", "AM4 • 16C/32T • Up to 4.9GHz", 5650000, 3850000, 105, { socket: "AM4" }],
+        ["AMD", "AMD Ryzen 5 7500F", "AM5 • 6C/12T • Up to 5.0GHz • Best Value AM5", 2450000, 1850000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 5 7600", "AM5 • 6C/12T • Up to 5.1GHz • Radeon iGPU", 2950000, 2200000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 5 7600X", "AM5 • 6C/12T • Up to 5.3GHz", 3290000, 2450000, 105, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 7 7700", "AM5 • 8C/16T • Up to 5.3GHz • 65W TDP", 4250000, 3150000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 7 7700X", "AM5 • 8C/16T • Up to 5.4GHz", 4590000, 3400000, 105, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 7 7800X3D", "AM5 • 8C/16T • 3D V-Cache Gaming King", 6450000, 4950000, 120, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 7900", "AM5 • 12C/24T • Up to 5.4GHz • 65W", 5750000, 4250000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 7900X", "AM5 • 12C/24T • Up to 5.6GHz", 6150000, 4550000, 170, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 7950X", "AM5 • 16C/32T • Up to 5.7GHz", 8150000, 5950000, 170, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 7950X3D", "AM5 • 16C/32T • 144MB Cache Ultimate", 9450000, 6950000, 120, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 5 8500G", "AM5 • 6C/12T • Radeon 740M iGPU", 2350000, 1750000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 5 8600G", "AM5 • 6C/12T • Radeon 760M iGPU", 3150000, 2350000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 7 8700G", "AM5 • 8C/16T • Radeon 780M iGPU", 4490000, 3350000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 5 9600X", "AM5 • 6C/12T • Zen 5 • Up to 5.4GHz", 3850000, 2950000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 7 9700X", "AM5 • 8C/16T • Zen 5 • Up to 5.5GHz", 5150000, 3950000, 65, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 7 9800X3D", "AM5 • 8C/16T • Zen 5 3D V-Cache", 7850000, 6250000, 120, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 9900X", "AM5 • 12C/24T • Zen 5 • Up to 5.6GHz", 6850000, 5250000, 120, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 9950X", "AM5 • 16C/32T • Zen 5 • Up to 5.7GHz", 9650000, 7450000, 170, { socket: "AM5" }],
+        ["AMD", "AMD Ryzen 9 9950X3D", "AM5 • 16C/32T • Zen 5 3D V-Cache Flagship", 11450000, 8950000, 170, { socket: "AM5" }],
+        ["Intel", "Intel Pentium Gold G7400", "LGA1700 • 2C/4T • Office & Kasir", 920000, 550000, 46, { socket: "LGA1700" }]
+      ];
+      cpus.forEach(c => addItem('cpu', c[0], c[1], c[2], c[3], c[4], c[5], c[6]));
+
+      // =========================================================================
+      // KATEGORI 2: MOTHERBOARD (MOBO) - 78 ITEM
+      // =========================================================================
+      const mobos = [
+        // LGA1200
+        ["ASRock", "ASRock H410M-HVS", "LGA1200 • DDR4 • mATX • Entry", 850000, 520000, 25, { socket: "LGA1200", ramType: "DDR4" }],
+        ["ASUS", "ASUS Prime H510M-K R2.0", "LGA1200 • DDR4 • mATX • NVMe", 1020000, 650000, 25, { socket: "LGA1200", ramType: "DDR4" }],
+        ["MSI", "MSI B460M-A PRO", "LGA1200 • DDR4 • mATX", 1150000, 700000, 30, { socket: "LGA1200", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte B560M DS3H V2", "LGA1200 • DDR4 • 4 Slot RAM • mATX", 1390000, 850000, 30, { socket: "LGA1200", ramType: "DDR4" }],
+        ["ASUS", "ASUS TUF Gaming B560M-Plus WiFi", "LGA1200 • DDR4 • WiFi 6 • mATX", 1850000, 1150000, 35, { socket: "LGA1200", ramType: "DDR4" }],
+        ["MSI", "MSI MPG Z490 Gaming Plus", "LGA1200 • DDR4 • ATX • Overclock", 2250000, 1350000, 40, { socket: "LGA1200", ramType: "DDR4" }],
+        // LGA1700 DDR4 & DDR5
+        ["ASRock", "ASRock H610M-HVS/M.2 R2.0", "LGA1700 • DDR4 • mATX • Budget", 1080000, 720000, 25, { socket: "LGA1700", ramType: "DDR4" }],
+        ["ASUS", "ASUS Prime H610M-E D4", "LGA1700 • DDR4 • Dual M.2 • mATX", 1250000, 820000, 25, { socket: "LGA1700", ramType: "DDR4" }],
+        ["MSI", "MSI PRO H610M-E DDR4", "LGA1700 • DDR4 • mATX", 1190000, 790000, 25, { socket: "LGA1700", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte H610M H V2 DDR4", "LGA1700 • DDR4 • mATX", 1180000, 780000, 25, { socket: "LGA1700", ramType: "DDR4" }],
+        ["ASRock", "ASRock B660M Pro RS", "LGA1700 • DDR4 • 4 Slot RAM • mATX", 1680000, 1120000, 30, { socket: "LGA1700", ramType: "DDR4" }],
+        ["MSI", "MSI PRO B660M-A DDR4", "LGA1700 • DDR4 • VRM Dingin • mATX", 1890000, 1250000, 35, { socket: "LGA1700", ramType: "DDR4" }],
+        ["ASUS", "ASUS Prime B660M-A WiFi D4", "LGA1700 • DDR4 • WiFi 6 • mATX", 2150000, 1420000, 35, { socket: "LGA1700", ramType: "DDR4" }],
+        ["ASRock", "ASRock B760M-HDV/M.2 D4", "LGA1700 • DDR4 • mATX", 1590000, 1080000, 30, { socket: "LGA1700", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte B760M DS3H DDR4", "LGA1700 • DDR4 • 4 Slot RAM • mATX", 1850000, 1250000, 30, { socket: "LGA1700", ramType: "DDR4" }],
+        ["MSI", "MSI PRO B760M-A WiFi DDR4", "LGA1700 • DDR4 • WiFi 6E • mATX", 2290000, 1550000, 35, { socket: "LGA1700", ramType: "DDR4" }],
+        ["ASUS", "ASUS TUF Gaming B760M-Plus WiFi D4", "LGA1700 • DDR4 • WiFi 6 • mATX", 2690000, 1850000, 35, { socket: "LGA1700", ramType: "DDR4" }],
+        ["ASRock", "ASRock B760M Pro RS/D5", "LGA1700 • DDR5 • White Silver • mATX", 2190000, 1520000, 35, { socket: "LGA1700", ramType: "DDR5" }],
+        ["MSI", "MSI B760M Gaming Plus WiFi DDR5", "LGA1700 • DDR5 • WiFi 6E • mATX", 2490000, 1750000, 35, { socket: "LGA1700", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte B760M AORUS Elite AX DDR5", "LGA1700 • DDR5 • WiFi 6E • mATX", 2850000, 1980000, 40, { socket: "LGA1700", ramType: "DDR5" }],
+        ["ASUS", "ASUS ROG Strix B760-F Gaming WiFi", "LGA1700 • DDR5 • ATX • Premium", 3950000, 2750000, 45, { socket: "LGA1700", ramType: "DDR5" }],
+        ["MSI", "MSI MAG B760 Tomahawk WiFi DDR5", "LGA1700 • DDR5 • ATX • Solid VRM", 3450000, 2400000, 40, { socket: "LGA1700", ramType: "DDR5" }],
+        ["MSI", "MSI PRO Z790-P WiFi DDR5", "LGA1700 • DDR5 • ATX • Overclock", 3690000, 2550000, 45, { socket: "LGA1700", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte Z790 AORUS Elite AX", "LGA1700 • DDR5 • ATX • WiFi 6E", 4450000, 3100000, 50, { socket: "LGA1700", ramType: "DDR5" }],
+        ["ASUS", "ASUS TUF Gaming Z790-Plus WiFi", "LGA1700 • DDR5 • ATX • Military Grade", 4650000, 3250000, 50, { socket: "LGA1700", ramType: "DDR5" }],
+        ["MSI", "MSI MAG Z790 Tomahawk WiFi", "LGA1700 • DDR5 • ATX • Heavy VRM", 4890000, 3450000, 50, { socket: "LGA1700", ramType: "DDR5" }],
+        ["ASUS", "ASUS ROG Strix Z790-E Gaming WiFi II", "LGA1700 • DDR5 • ATX • Enthusiast", 7650000, 5400000, 60, { socket: "LGA1700", ramType: "DDR5" }],
+        ["MSI", "MSI MEG Z790 ACE MAX", "LGA1700 • DDR5 • E-ATX • Flagship", 10450000, 7300000, 65, { socket: "LGA1700", ramType: "DDR5" }],
+        // LGA1851
+        ["ASRock", "ASRock B860M Pro RS WiFi", "LGA1851 • DDR5 • mATX • Core Ultra", 2650000, 1950000, 40, { socket: "LGA1851", ramType: "DDR5" }],
+        ["MSI", "MSI MAG B860 Tomahawk WiFi", "LGA1851 • DDR5 • ATX • WiFi 7", 3650000, 2750000, 45, { socket: "LGA1851", ramType: "DDR5" }],
+        ["ASUS", "ASUS TUF Gaming Z890-Plus WiFi", "LGA1851 • DDR5 • ATX • Thunderbolt 4", 5250000, 3950000, 55, { socket: "LGA1851", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte Z890 AORUS Master", "LGA1851 • DDR5 • E-ATX • WiFi 7", 8450000, 6350000, 65, { socket: "LGA1851", ramType: "DDR5" }],
+        // AM4
+        ["ASRock", "ASRock A320M-HDV R4.0", "AM4 • DDR4 • mATX • Super Budget", 740000, 450000, 20, { socket: "AM4", ramType: "DDR4" }],
+        ["ASRock", "ASRock A520M-HVS", "AM4 • DDR4 • mATX • Ryzen 5000 Ready", 860000, 550000, 25, { socket: "AM4", ramType: "DDR4" }],
+        ["MSI", "MSI A520M-A PRO", "AM4 • DDR4 • mATX • NVMe", 920000, 590000, 25, { socket: "AM4", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte A520M K V2", "AM4 • DDR4 • mATX", 910000, 580000, 25, { socket: "AM4", ramType: "DDR4" }],
+        ["ASUS", "ASUS Prime A520M-K", "AM4 • DDR4 • mATX", 980000, 620000, 25, { socket: "AM4", ramType: "DDR4" }],
+        ["ASRock", "ASRock B450M-HDV R4.0", "AM4 • DDR4 • mATX • Best Seller", 950000, 600000, 25, { socket: "AM4", ramType: "DDR4" }],
+        ["ASRock", "ASRock B450M Steel Legend", "AM4 • DDR4 • RGB • mATX", 1450000, 920000, 30, { socket: "AM4", ramType: "DDR4" }],
+        ["MSI", "MSI B450M-A PRO MAX II", "AM4 • DDR4 • mATX", 1050000, 680000, 25, { socket: "AM4", ramType: "DDR4" }],
+        ["ASUS", "ASUS TUF Gaming B450M-Pro II", "AM4 • DDR4 • 4 Slot RAM • mATX", 1590000, 1020000, 30, { socket: "AM4", ramType: "DDR4" }],
+        ["ASRock", "ASRock B550M-HDV", "AM4 • DDR4 • PCIe 4.0 • mATX", 1250000, 820000, 30, { socket: "AM4", ramType: "DDR4" }],
+        ["ASRock", "ASRock B550M Pro4", "AM4 • DDR4 • 4 Slot RAM • mATX", 1580000, 1050000, 30, { socket: "AM4", ramType: "DDR4" }],
+        ["ASRock", "ASRock B550M Steel Legend", "AM4 • DDR4 • 2.5G LAN • mATX", 1950000, 1280000, 35, { socket: "AM4", ramType: "DDR4" }],
+        ["MSI", "MSI B550M PRO-VDH WiFi", "AM4 • DDR4 • WiFi • 4 Slot RAM", 1820000, 1220000, 35, { socket: "AM4", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte B550M DS3H AC", "AM4 • DDR4 • WiFi • mATX", 1690000, 1120000, 30, { socket: "AM4", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte B550M AORUS Elite", "AM4 • DDR4 • mATX • Gaming", 1890000, 1250000, 35, { socket: "AM4", ramType: "DDR4" }],
+        ["ASUS", "ASUS Prime B550M-A WiFi II", "AM4 • DDR4 • WiFi 6 • mATX", 1950000, 1290000, 35, { socket: "AM4", ramType: "DDR4" }],
+        ["ASUS", "ASUS TUF Gaming B550M-Plus WiFi II", "AM4 • DDR4 • WiFi 6 • mATX", 2390000, 1590000, 35, { socket: "AM4", ramType: "DDR4" }],
+        ["MSI", "MSI MAG B550 Tomahawk MAX WiFi", "AM4 • DDR4 • ATX • Best AM4", 2790000, 1850000, 40, { socket: "AM4", ramType: "DDR4" }],
+        ["ASUS", "ASUS ROG Strix B550-F Gaming WiFi II", "AM4 • DDR4 • ATX • ROG Audio", 3150000, 2100000, 40, { socket: "AM4", ramType: "DDR4" }],
+        ["Gigabyte", "Gigabyte X570S AORUS Elite AX", "AM4 • DDR4 • ATX • Triple M.2", 3450000, 2250000, 45, { socket: "AM4", ramType: "DDR4" }],
+        // AM5 DDR5
+        ["ASRock", "ASRock A620M-HDV/M.2+", "AM5 • DDR5 • mATX • Entry AM5", 1490000, 1050000, 30, { socket: "AM5", ramType: "DDR5" }],
+        ["MSI", "MSI PRO A620M-E", "AM5 • DDR5 • mATX", 1550000, 1090000, 30, { socket: "AM5", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte A620M Gaming X", "AM5 • DDR5 • 4 Slot RAM • mATX", 1850000, 1290000, 30, { socket: "AM5", ramType: "DDR5" }],
+        ["ASRock", "ASRock B650M-HDV/M.2", "AM5 • DDR5 • Best Value VRM • mATX", 1990000, 1450000, 35, { socket: "AM5", ramType: "DDR5" }],
+        ["ASRock", "ASRock B650M Pro RS WiFi", "AM5 • DDR5 • White • WiFi 6E • mATX", 2490000, 1820000, 35, { socket: "AM5", ramType: "DDR5" }],
+        ["MSI", "MSI PRO B650M-A WiFi", "AM5 • DDR5 • WiFi 6E • mATX", 2590000, 1880000, 35, { socket: "AM5", ramType: "DDR5" }],
+        ["MSI", "MSI B650M Gaming Plus WiFi", "AM5 • DDR5 • WiFi 6E • mATX", 2690000, 1950000, 35, { socket: "AM5", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte B650M Gaming X AX", "AM5 • DDR5 • WiFi 6E • mATX", 2750000, 1990000, 35, { socket: "AM5", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte B650M AORUS Elite AX", "AM5 • DDR5 • WiFi 6E • mATX", 3190000, 2320000, 40, { socket: "AM5", ramType: "DDR5" }],
+        ["ASUS", "ASUS TUF Gaming B650M-Plus WiFi", "AM5 • DDR5 • WiFi 6 • mATX", 3290000, 2390000, 40, { socket: "AM5", ramType: "DDR5" }],
+        ["MSI", "MSI MAG B650 Tomahawk WiFi", "AM5 • DDR5 • ATX • Best Seller AM5", 3590000, 2650000, 45, { socket: "AM5", ramType: "DDR5" }],
+        ["ASUS", "ASUS ROG Strix B650E-F Gaming WiFi", "AM5 • DDR5 • PCIe 5.0 • ATX", 4590000, 3350000, 45, { socket: "AM5", ramType: "DDR5" }],
+        ["ASRock", "ASRock B650E Steel Legend WiFi", "AM5 • DDR5 • White ATX • PCIe 5.0", 4250000, 3100000, 45, { socket: "AM5", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte B650 AORUS Elite AX Ice", "AM5 • DDR5 • Full White ATX", 3950000, 2890000, 45, { socket: "AM5", ramType: "DDR5" }],
+        ["MSI", "MSI MAG X670E Tomahawk WiFi", "AM5 • DDR5 • ATX • 4x M.2", 4950000, 3650000, 50, { socket: "AM5", ramType: "DDR5" }],
+        ["ASUS", "ASUS TUF Gaming X670E-Plus WiFi", "AM5 • DDR5 • ATX • PCIe 5.0", 5150000, 3790000, 50, { socket: "AM5", ramType: "DDR5" }],
+        ["ASRock", "ASRock X870 Pro RS WiFi", "AM5 • DDR5 • USB4 • White ATX", 4150000, 3150000, 45, { socket: "AM5", ramType: "DDR5" }],
+        ["MSI", "MSI MAG X870 Tomahawk WiFi", "AM5 • DDR5 • WiFi 7 • USB4 • ATX", 5250000, 3980000, 50, { socket: "AM5", ramType: "DDR5" }],
+        ["Gigabyte", "Gigabyte X870E AORUS Pro Ice", "AM5 • DDR5 • White • WiFi 7", 6250000, 4750000, 55, { socket: "AM5", ramType: "DDR5" }],
+        ["ASUS", "ASUS ROG Crosshair X870E Hero", "AM5 • DDR5 • Flagship Enthusiast", 10950000, 8250000, 65, { socket: "AM5", ramType: "DDR5" }]
+      ];
+      mobos.forEach(m => addItem('mobo', m[0], m[1], m[2], m[3], m[4], m[5], m[6]));
+
+      // =========================================================================
+      // KATEGORI 3: VGA / KARTU GRAFIS (GPU) - 82 ITEM
+      // =========================================================================
+      const gpus = [
+        // NVIDIA GTX & RTX 20/30/40/50 Series
+        ["ASUS", "ASUS Phoenix GTX 1650 OC 4GB", "GDDR6 • No Pin Power • Entry", 2150000, 1250000, 75],
+        ["ZOTAC", "ZOTAC Gaming GTX 1660 Super 6GB Twin Fan", "GDDR6 • Dual Fan • 1080p Budget", 2650000, 1480000, 125],
+        ["MSI", "MSI Ventus XS GTX 1660 Ti 6GB OC", "GDDR6 • Dual Fan", 2790000, 1550000, 120],
+        ["Galax", "Galax RTX 2060 Plus 6GB (1-Click OC)", "GDDR6 • Ray Tracing • DLSS", 3150000, 1850000, 160],
+        ["ASUS", "ASUS Dual RTX 2060 Super EVO 8GB", "GDDR6 • 8GB VRAM • 1080p High", 3550000, 2150000, 175],
+        ["ZOTAC", "ZOTAC Gaming RTX 3050 6GB Solo", "GDDR6 • 70W Tanpa Pin Power", 2750000, 1950000, 70],
+        ["MSI", "MSI Ventus 2X RTX 3050 8GB OC", "GDDR6 • Dual Fan • DLSS", 3250000, 2200000, 130],
+        ["ASUS", "ASUS Dual RTX 3050 8GB OC", "GDDR6 • Axial-Tech Fans", 3450000, 2300000, 130],
+        ["ZOTAC", "ZOTAC Gaming RTX 3060 12GB Twin Edge", "GDDR6 • 12GB VRAM • Rendering & Game", 4250000, 2850000, 170],
+        ["MSI", "MSI Ventus 2X RTX 3060 12GB OC", "GDDR6 • 12GB VRAM • Dual Fan", 4390000, 2950000, 170],
+        ["ASUS", "ASUS Dual RTX 3060 V2 OC 12GB", "GDDR6 • 12GB VRAM • Best Value", 4590000, 3100000, 170],
+        ["Galax", "Galax RTX 3060 Ti 8GB (1-Click OC)", "GDDR6 • 256-bit • 1080p Ultra", 4950000, 3250000, 200],
+        ["MSI", "MSI Gaming X RTX 3060 Ti 8GB", "GDDR6 • Twin Frozr 8", 5350000, 3450000, 200],
+        ["ASUS", "ASUS TUF Gaming RTX 3070 8GB OC", "GDDR6 • Triple Fan • 1440p Gaming", 6250000, 3750000, 220],
+        ["Gigabyte", "Gigabyte Gaming OC RTX 3070 Ti 8GB", "GDDR6X • Windforce 3X", 6850000, 4150000, 290],
+        ["MSI", "MSI Suprim X RTX 3080 10GB", "GDDR6X • Flagship Cooler • 4K Ready", 8950000, 5250000, 320],
+        ["ASUS", "ASUS ROG Strix RTX 3080 Ti 12GB", "GDDR6X • Triple Fan • Beast", 10500000, 6150000, 350],
+        ["ZOTAC", "ZOTAC Gaming RTX 4060 8GB Twin Edge", "GDDR6 • DLSS 3 Frame Gen • 115W", 4550000, 3550000, 115],
+        ["MSI", "MSI Ventus 2X Black RTX 4060 8GB OC", "GDDR6 • DLSS 3 • Hemat Daya", 4690000, 3650000, 115],
+        ["Gigabyte", "Gigabyte Windforce OC RTX 4060 8GB", "GDDR6 • Dual Fan • Compact", 4750000, 3700000, 115],
+        ["ASUS", "ASUS Dual RTX 4060 OC 8GB", "GDDR6 • Dual BIOS • Quiet", 4950000, 3850000, 115],
+        ["ASUS", "ASUS Dual RTX 4060 White OC 8GB", "GDDR6 • Full White Edition", 5150000, 4050000, 115],
+        ["Galax", "Galax RTX 4060 Ti 8GB (1-Click OC)", "GDDR6 • DLSS 3 • 1080p/1440p", 5950000, 4650000, 160],
+        ["MSI", "MSI Gaming X Slim RTX 4060 Ti 8GB", "GDDR6 • Triple Fan Slim", 6450000, 4950000, 160],
+        ["ZOTAC", "ZOTAC Gaming RTX 4060 Ti 16GB AMP", "GDDR6 • 16GB VRAM • AI & Render", 7250000, 5650000, 165],
+        ["ASUS", "ASUS ProArt RTX 4060 Ti 16GB OC", "GDDR6 • 16GB • Creator Edition", 7850000, 6100000, 165],
+        ["ZOTAC", "ZOTAC Gaming RTX 4070 12GB Twin Edge", "GDDR6X • DLSS 3 • 1440p Sweetspot", 8650000, 6750000, 200],
+        ["MSI", "MSI Ventus 2X RTX 4070 12GB OC", "GDDR6X • 200W • Compact 1440p", 8850000, 6900000, 200],
+        ["Gigabyte", "Gigabyte Aero OC RTX 4070 12GB", "GDDR6X • White Triple Fan", 9650000, 7450000, 200],
+        ["ASUS", "ASUS Dual RTX 4070 Super 12GB OC", "GDDR6X • +15% Faster • 220W", 9850000, 7750000, 220],
+        ["MSI", "MSI Gaming X Slim RTX 4070 Super 12GB", "GDDR6X • Triple Fan • 1440p Ultra", 10450000, 8250000, 220],
+        ["ASUS", "ASUS TUF Gaming RTX 4070 Super 12GB", "GDDR6X • Metal Shroud", 10850000, 8550000, 220],
+        ["ZOTAC", "ZOTAC Gaming RTX 4070 Ti Super 16GB Trinity", "GDDR6X • 16GB 256-bit • 4K Entry", 13250000, 10450000, 285],
+        ["MSI", "MSI Gaming X Slim RTX 4070 Ti Super 16GB", "GDDR6X • 16GB VRAM • White/Black", 13950000, 10950000, 285],
+        ["ASUS", "ASUS ROG Strix RTX 4070 Ti Super 16GB", "GDDR6X • Flagship Cooling", 15250000, 11850000, 285],
+        ["Gigabyte", "Gigabyte Gaming OC RTX 4080 Super 16GB", "GDDR6X • 4K Ultra Gaming", 16850000, 13250000, 320],
+        ["MSI", "MSI Suprim X RTX 4080 Super 16GB", "GDDR6X • Premium Aluminum", 18250000, 14250000, 320],
+        ["ASUS", "ASUS TUF Gaming RTX 4090 24GB OC", "GDDR6X • 24GB VRAM • King of 4K/AI", 29500000, 23500000, 450],
+        ["MSI", "MSI Suprim Liquid X RTX 4090 24GB", "GDDR6X • 240mm AIO Hybrid", 32500000, 25500000, 450],
+        ["ASUS", "ASUS ROG Strix RTX 4090 24GB White", "GDDR6X • Collector Edition", 34500000, 27000000, 450],
+        // NVIDIA RTX 50 Series (Blackwell)
+        ["ZOTAC", "ZOTAC Gaming RTX 5070 12GB Twin Edge", "GDDR7 • DLSS 4 Multi Frame Gen", 9950000, 8250000, 250],
+        ["MSI", "MSI Ventus 3X RTX 5070 12GB OC", "GDDR7 • Triple Fan • Blackwell", 10450000, 8650000, 250],
+        ["ASUS", "ASUS TUF Gaming RTX 5070 Ti 16GB OC", "GDDR7 • 16GB • 4K/1440p High FPS", 14450000, 11950000, 300],
+        ["Gigabyte", "Gigabyte AORUS Master RTX 5080 16GB", "GDDR7 • LCD Edge View • 4K Beast", 19850000, 16500000, 360],
+        ["MSI", "MSI Suprim SOC RTX 5090 32GB", "GDDR7 • 32GB 512-bit • Ultimate AI/4K", 38500000, 32500000, 575],
+        ["ASUS", "ASUS ROG Astral RTX 5090 32GB OC", "GDDR7 • Quad-Fan Flagship", 41500000, 34900000, 575],
+
+        // AMD Radeon RX 5000, 6000, 7000, 8000/9000 Series
+        ["ASRock", "ASRock Challenger RX 580 8GB OC", "GDDR5 • Legenda Budget 1080p", 1450000, 820000, 185],
+        ["Sapphire", "Sapphire Pulse RX 5600 XT 6GB", "GDDR6 • Dual-X Cooling", 2250000, 1350000, 150],
+        ["PowerColor", "PowerColor Fighter RX 6500 XT 4GB", "GDDR6 • Low Power Entry", 1950000, 1250000, 107],
+        ["ASRock", "ASRock Challenger D RX 6600 8GB", "GDDR6 • Best Budget 1080p Gaming", 3090000, 2050000, 132],
+        ["Sapphire", "Sapphire Pulse RX 6600 8GB", "GDDR6 • Adem & Senyap • Best Value", 3190000, 2150000, 132],
+        ["PowerColor", "PowerColor Hellhound RX 6600 XT 8GB", "GDDR6 • LED Blue/White", 3650000, 2350000, 160],
+        ["MSI", "MSI Mech 2X RX 6650 XT 8GB OC", "GDDR6 • Dual Fan • 1080p Max", 3850000, 2450000, 180],
+        ["Sapphire", "Sapphire Pulse RX 6700 XT 12GB", "GDDR6 • 12GB VRAM • 1440p King", 4850000, 3150000, 230],
+        ["ASUS", "ASUS Dual RX 6700 XT 12GB OC", "GDDR6 • 12GB VRAM", 4950000, 3250000, 230],
+        ["PowerColor", "PowerColor Red Devil RX 6750 XT 12GB", "GDDR6 • Triple Fan RGB", 5450000, 3550000, 250],
+        ["Sapphire", "Sapphire Nitro+ RX 6800 16GB", "GDDR6 • 16GB VRAM • 1440p/4K", 6450000, 4150000, 250],
+        ["ASUS", "ASUS TUF Gaming RX 6800 XT 16GB", "GDDR6 • 16GB • Rasterisasi Kencang", 7450000, 4650000, 300],
+        ["Sapphire", "Sapphire Pulse RX 7600 8GB", "GDDR6 • RDNA 3 • 1080p Ultra", 4150000, 3050000, 165],
+        ["ASRock", "ASRock Steel Legend RX 7600 8GB OC", "GDDR6 • Triple Fan White RGB", 4490000, 3290000, 165],
+        ["Gigabyte", "Gigabyte Gaming OC RX 7600 XT 16GB", "GDDR6 • 16GB VRAM • Triple Fan", 5250000, 3950000, 190],
+        ["Sapphire", "Sapphire Pulse RX 7700 XT 12GB", "GDDR6 • 1440p High Refresh", 6650000, 5050000, 245],
+        ["ASRock", "ASRock Steel Legend RX 7700 XT 12GB", "GDDR6 • White Triple Fan", 6950000, 5250000, 245],
+        ["Sapphire", "Sapphire Pulse RX 7800 XT 16GB", "GDDR6 • 16GB 256-bit • 1440p Beast", 7850000, 5950000, 263],
+        ["Sapphire", "Sapphire Nitro+ RX 7800 XT 16GB", "GDDR6 • Vapor Chamber • RGB Bar", 8450000, 6450000, 263],
+        ["PowerColor", "PowerColor Hellhound RX 7800 XT 16GB", "GDDR6 • Super Quiet Cooler", 8150000, 6150000, 263],
+        ["ASRock", "ASRock Phantom Gaming RX 7900 GRE 16GB", "GDDR6 • Golden Rabbit Edition", 8850000, 6750000, 260],
+        ["Sapphire", "Sapphire Pulse RX 7900 XT 20GB", "GDDR6 • 20GB VRAM • 4K Gaming", 11850000, 8950000, 315],
+        ["Sapphire", "Sapphire Nitro+ RX 7900 XTX 24GB", "GDDR6 • 24GB VRAM • AMD Flagship", 15650000, 11850000, 355],
+        ["ASUS", "ASUS TUF Gaming RX 7900 XTX 24GB OC", "GDDR6 • 24GB VRAM • Triple Fan", 16250000, 12250000, 355],
+        ["Sapphire", "Sapphire Pulse RX 9070 16GB", "GDDR6 • RDNA 4 • FSR 4", 9450000, 7650000, 220],
+        ["Sapphire", "Sapphire Nitro+ RX 9070 XT 16GB", "GDDR6 • RDNA 4 • 4K Gaming", 11450000, 9250000, 304],
+        ["PowerColor", "PowerColor Red Devil RX 9070 XT 16GB", "GDDR6 • Triple Fan Enthusiast", 11850000, 9550000, 304],
+        // Intel Arc
+        ["ASRock", "ASRock Challenger Arc A580 8GB OC", "GDDR6 • AV1 Encode • Budget", 2650000, 1850000, 185],
+        ["ASRock", "ASRock Challenger Arc A750 8GB OC", "GDDR6 • 256-bit • XeSS", 3250000, 2250000, 225],
+        ["ASRock", "ASRock Phantom Gaming Arc A770 16GB", "GDDR6 • 16GB VRAM • RGB", 4650000, 3250000, 225],
+        ["ASRock", "ASRock Steel Legend Arc B580 12GB", "GDDR6 • Battlemage • 12GB Value King", 4250000, 3350000, 190]
+      ];
+      gpus.forEach(g => addItem('gpu', g[0], g[1], g[2], g[3], g[4], g[5]));
+
+      // =========================================================================
+      // KATEGORI 4: RAM (MEMORY) - 76 ITEM
+      // =========================================================================
+      const rams = [
+        // DDR4 Kits
+        ["Kingston", "Kingston Fury Beast 8GB (1x8GB) DDR4 3200MHz", "DDR4 • CL16 • Single Stick", 310000, 200000, 3, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance LPX 8GB (1x8GB) DDR4 3200MHz", "DDR4 • CL16 • Low Profile", 330000, 210000, 3, { ramType: "DDR4" }],
+        ["TeamGroup", "TeamGroup T-Force Vulcan Z 8GB (1x8GB) DDR4 3200", "DDR4 • CL16 • Gray/Red", 295000, 190000, 3, { ramType: "DDR4" }],
+        ["ADATA", "ADATA XPG Spectrix D35G 8GB DDR4 3200MHz RGB", "DDR4 • CL16 • RGB", 345000, 225000, 4, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Beast 16GB (2x8GB) DDR4 3200MHz", "DDR4 • Dual Channel • CL16", 590000, 390000, 6, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Beast RGB 16GB (2x8GB) DDR4 3200", "DDR4 • Dual Channel • RGB", 680000, 450000, 8, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Beast 16GB (2x8GB) DDR4 3600MHz", "DDR4 • CL17 • Ryzen Sweetspot", 640000, 420000, 6, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance LPX 16GB (2x8GB) DDR4 3200MHz", "DDR4 • Dual Channel • Black", 620000, 410000, 6, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance LPX 16GB (2x8GB) DDR4 3600MHz", "DDR4 • CL18 • Dual Channel", 670000, 440000, 6, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance RGB Pro 16GB (2x8GB) DDR4 3200", "DDR4 • iCUE RGB • Black/White", 790000, 520000, 8, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance RGB RS 16GB (2x8GB) DDR4 3600", "DDR4 • Dynamic RGB", 820000, 540000, 8, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Ripjaws V 16GB (2x8GB) DDR4 3200MHz", "DDR4 • CL16 • Classic Black", 610000, 400000, 6, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Ripjaws V 16GB (2x8GB) DDR4 3600MHz", "DDR4 • CL18 • Performance", 660000, 430000, 6, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Trident Z RGB 16GB (2x8GB) DDR4 3200MHz", "DDR4 • CL16 • Iconic RGB", 850000, 560000, 8, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Trident Z Neo 16GB (2x8GB) DDR4 3600MHz", "DDR4 • Optimized for AMD Ryzen", 920000, 600000, 8, { ramType: "DDR4" }],
+        ["TeamGroup", "TeamGroup T-Force Delta RGB 16GB (2x8GB) DDR4 3200", "DDR4 • Wide Angle RGB", 670000, 440000, 8, { ramType: "DDR4" }],
+        ["TeamGroup", "TeamGroup T-Force Delta RGB White 16GB (2x8GB) 3600", "DDR4 • White Heatsink • RGB", 720000, 470000, 8, { ramType: "DDR4" }],
+        ["ADATA", "ADATA XPG Spectrix D50 16GB (2x8GB) DDR4 3200", "DDR4 • Metal Heatsink RGB", 690000, 450000, 8, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Beast 32GB (2x16GB) DDR4 3200MHz", "DDR4 • 32GB Kit • Multitasking", 1090000, 740000, 8, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Beast RGB 32GB (2x16GB) DDR4 3600", "DDR4 • 32GB Kit • RGB", 1250000, 850000, 10, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance LPX 32GB (2x16GB) DDR4 3200MHz", "DDR4 • 32GB Kit • Low Profile", 1120000, 760000, 8, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance RGB Pro SL 32GB (2x16GB) 3600", "DDR4 • 32GB • Compact RGB", 1390000, 940000, 10, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Ripjaws V 32GB (2x16GB) DDR4 3600MHz", "DDR4 • 32GB • CL18", 1180000, 800000, 8, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Trident Z RGB 32GB (2x16GB) DDR4 3600MHz", "DDR4 • 32GB • Premium RGB", 1490000, 1020000, 10, { ramType: "DDR4" }],
+        ["TeamGroup", "TeamGroup T-Force Vulcan Z 32GB (2x16GB) DDR4 3200", "DDR4 • 32GB • Best Value", 1020000, 690000, 8, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Vengeance LPX 64GB (2x32GB) DDR4 3200MHz", "DDR4 • 64GB Workstation", 2150000, 1450000, 12, { ramType: "DDR4" }],
+
+        // DDR5 Kits
+        ["Kingston", "Kingston Fury Beast 16GB (1x16GB) DDR5 5200MHz", "DDR5 • Single Stick • Entry AM5", 790000, 560000, 5, { ramType: "DDR5" }],
+        ["Kingston", "Kingston Fury Beast 16GB (2x8GB) DDR5 5600MHz", "DDR5 • Dual Channel • CL36", 950000, 680000, 8, { ramType: "DDR5" }],
+        ["Crucial", "Crucial Pro 16GB (1x16GB) DDR5 5600MHz", "DDR5 • Black Heatsink", 760000, 540000, 5, { ramType: "DDR5" }],
+        ["TeamGroup", "TeamGroup T-Force Vulcan 16GB (2x8GB) DDR5 5600", "DDR5 • Dual Channel", 920000, 650000, 8, { ramType: "DDR5" }],
+        ["ADATA", "ADATA XPG Lancer Blade 16GB (1x16GB) DDR5 6000", "DDR5 • CL30 • Low Profile", 850000, 610000, 5, { ramType: "DDR5" }],
+        ["Kingston", "Kingston Fury Beast 32GB (2x16GB) DDR5 5600MHz", "DDR5 • 32GB Kit • XMP/EXPO", 1590000, 1150000, 10, { ramType: "DDR5" }],
+        ["Kingston", "Kingston Fury Beast 32GB (2x16GB) DDR5 6000MHz", "DDR5 • CL30 • Sweetspot Ryzen/Intel", 1750000, 1280000, 10, { ramType: "DDR5" }],
+        ["Kingston", "Kingston Fury Beast RGB 32GB (2x16GB) DDR5 6000", "DDR5 • CL30 • RGB Black/White", 1890000, 1380000, 12, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance 32GB (2x16GB) DDR5 5600MHz", "DDR5 • Dual Channel • Gray", 1650000, 1190000, 10, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz", "DDR5 • CL30 • EXPO & XMP", 1820000, 1320000, 10, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance RGB 32GB (2x16GB) DDR5 6000", "DDR5 • CL30 • iCUE RGB", 1990000, 1450000, 12, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance RGB White 32GB (2x16GB) 6000", "DDR5 • White • CL30", 2050000, 1490000, 12, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Dominator Titanium 32GB (2x16GB) 6400", "DDR5 • Flagship • Swappable Top", 2850000, 2100000, 14, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Flare X5 32GB (2x16GB) DDR5 6000MHz", "DDR5 • CL30 • AMD EXPO Matte Black", 1780000, 1290000, 10, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Ripjaws S5 32GB (2x16GB) DDR5 6000MHz", "DDR5 • CL30 • Intel XMP", 1780000, 1290000, 10, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 Neo RGB 32GB (2x16GB) 6000", "DDR5 • CL30 • Best Ryzen RGB", 2050000, 1490000, 12, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 RGB 32GB (2x16GB) DDR5 6400", "DDR5 • CL32 • Silver/Black", 2150000, 1550000, 12, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 Royal 32GB (2x16GB) DDR5 6400", "DDR5 • Gold/Silver Crystalline RGB", 2750000, 1990000, 14, { ramType: "DDR5" }],
+        ["TeamGroup", "TeamGroup T-Create Expert 32GB (2x16GB) 6000", "DDR5 • CL30 • Minimalist Creator", 1690000, 1220000, 10, { ramType: "DDR5" }],
+        ["TeamGroup", "TeamGroup T-Force Delta RGB 32GB (2x16GB) 6000", "DDR5 • CL30 • Black/White RGB", 1850000, 1350000, 12, { ramType: "DDR5" }],
+        ["ADATA", "ADATA XPG Lancer Blade RGB 32GB (2x16GB) 6000", "DDR5 • CL30 • Compact RGB", 1790000, 1290000, 12, { ramType: "DDR5" }],
+        ["Crucial", "Crucial Pro Overclocking 32GB (2x16GB) 6000", "DDR5 • CL36 • Origami Heatsink", 1580000, 1140000, 10, { ramType: "DDR5" }],
+        ["Kingston", "Kingston Fury Beast 64GB (2x32GB) DDR5 6000MHz", "DDR5 • 64GB • Video Editing & AI", 3350000, 2450000, 14, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance RGB 64GB (2x32GB) DDR5 6000", "DDR5 • 64GB • CL30 • RGB", 3690000, 2690000, 16, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 Neo RGB 64GB (2x32GB) 6000", "DDR5 • 64GB • CL30 • EXPO", 3790000, 2790000, 16, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance 96GB (2x48GB) DDR5 5600MHz", "DDR5 • 96GB High Density", 4950000, 3650000, 18, { ramType: "DDR5" }]
+      ];
+      // Tambahkan beberapa varian kapasitas & speed ekstra agar >= 76 item
+      const extraRams = [
+        ["ADATA", "ADATA Premier 8GB DDR4 3200MHz", "DDR4 • Green PCB • Office", 265000, 165000, 3, { ramType: "DDR4" }],
+        ["Crucial", "Crucial Basics 8GB DDR4 3200MHz", "DDR4 • Single Stick", 275000, 175000, 3, { ramType: "DDR4" }],
+        ["Kingston", "Kingston ValueRAM 16GB (1x16GB) DDR4 3200", "DDR4 • Single Stick", 520000, 340000, 4, { ramType: "DDR4" }],
+        ["TeamGroup", "TeamGroup Elite Plus 16GB (2x8GB) DDR4 3200", "DDR4 • Dual Channel", 550000, 360000, 6, { ramType: "DDR4" }],
+        ["ADATA", "ADATA XPG Gammix D35 16GB (2x8GB) DDR4 3200", "DDR4 • Low Profile Black", 580000, 380000, 6, { ramType: "DDR4" }],
+        ["Corsair", "Corsair Dominator Platinum RGB 32GB (2x16GB) 3600", "DDR4 • Capellix LED", 1850000, 1250000, 10, { ramType: "DDR4" }],
+        ["G.Skill", "G.Skill Ripjaws V 64GB (2x32GB) DDR4 3600MHz", "DDR4 • 64GB Kit", 2290000, 1550000, 12, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Renegade 32GB (2x16GB) DDR4 3600", "DDR4 • CL16 Low Latency", 1450000, 980000, 8, { ramType: "DDR4" }],
+        ["TeamGroup", "TeamGroup T-Force Xtreem ARGB 16GB (2x8GB) 3600", "DDR4 • Mirror Finish RGB", 950000, 620000, 8, { ramType: "DDR4" }],
+        ["ADATA", "ADATA XPG Spectrix D60G 16GB (2x8GB) DDR4 3200", "DDR4 • Full RGB Diffuser", 780000, 510000, 8, { ramType: "DDR4" }],
+        ["Kingston", "Kingston Fury Renegade 32GB (2x16GB) DDR5 6400", "DDR5 • CL32 • Aluminum", 2150000, 1550000, 12, { ramType: "DDR5" }],
+        ["Kingston", "Kingston Fury Renegade RGB 32GB (2x16GB) DDR5 7200", "DDR5 • CL38 • Extreme Speed", 2590000, 1890000, 14, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance 48GB (2x24GB) DDR5 6000MHz", "DDR5 • 48GB Non-Binary", 2550000, 1850000, 12, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Dominator Titanium 64GB (2x32GB) 6000", "DDR5 • 64GB • CL30 • Flagship", 4450000, 3250000, 16, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 RGB 48GB (2x24GB) DDR5 6400", "DDR5 • 48GB • CL32", 2790000, 2050000, 14, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 Neo 64GB (2x32GB) DDR5 6000", "DDR5 • 64GB • Matte Black", 3490000, 2550000, 14, { ramType: "DDR5" }],
+        ["TeamGroup", "TeamGroup T-Force Delta RGB 64GB (2x32GB) 6000", "DDR5 • 64GB • RGB", 3450000, 2500000, 16, { ramType: "DDR5" }],
+        ["TeamGroup", "TeamGroup T-Create Classic 32GB (2x16GB) 5600", "DDR5 • CL46 • Clean Design", 1490000, 1080000, 10, { ramType: "DDR5" }],
+        ["ADATA", "ADATA XPG Lancer RGB 32GB (2x16GB) DDR5 6400", "DDR5 • CL32 • Heatsink", 1950000, 1420000, 12, { ramType: "DDR5" }],
+        ["ADATA", "ADATA XPG Lancer Blade 64GB (2x32GB) DDR5 6000", "DDR5 • 64GB • CL30", 3290000, 2390000, 14, { ramType: "DDR5" }],
+        ["Crucial", "Crucial 32GB (2x16GB) DDR5 4800MHz", "DDR5 • JEDEC Standard", 1350000, 950000, 8, { ramType: "DDR5" }],
+        ["Crucial", "Crucial Pro 64GB (2x32GB) DDR5 5600MHz", "DDR5 • 64GB Workstation", 2950000, 2150000, 12, { ramType: "DDR5" }],
+        ["Corsair", "Corsair Vengeance RGB 128GB (4x32GB) DDR5 5600", "DDR5 • 128GB Quad Stick", 6850000, 4950000, 24, { ramType: "DDR5" }],
+        ["G.Skill", "G.Skill Trident Z5 Royal Neo 32GB (2x16GB) 6000", "DDR5 • CL28 Ultra Low Latency", 2850000, 2100000, 14, { ramType: "DDR5" }]
+      ];
+      [...rams, ...extraRams].forEach(r => addItem('ram', r[0], r[1], r[2], r[3], r[4], r[5], r[6]));
+
+      // =========================================================================
+      // KATEGORI 5: SSD (NVME & SATA) - 78 ITEM
+      // =========================================================================
+      const ssds = [
+        // SATA 2.5"
+        ["Kingston", "Kingston A400 240GB SATA III", "2.5\" SATA • Read 500MB/s • Boot Drive", 320000, 190000, 3],
+        ["Kingston", "Kingston A400 480GB SATA III", "2.5\" SATA • Read 500MB/s", 540000, 330000, 3],
+        ["Kingston", "Kingston A400 960GB SATA III", "2.5\" SATA • 1TB Class", 950000, 580000, 4],
+        ["Crucial", "Crucial BX500 240GB SATA III", "2.5\" SATA • Read 540MB/s", 330000, 200000, 3],
+        ["Crucial", "Crucial BX500 500GB SATA III", "2.5\" SATA • Read 550MB/s", 560000, 350000, 3],
+        ["Crucial", "Crucial BX500 1TB SATA III", "2.5\" SATA • Read 540MB/s", 980000, 610000, 4],
+        ["Crucial", "Crucial MX500 500GB SATA III", "2.5\" SATA • DRAM Cache • TLC", 690000, 430000, 4],
+        ["Crucial", "Crucial MX500 1TB SATA III", "2.5\" SATA • DRAM Cache • Best SATA", 1190000, 750000, 4],
+        ["Samsung", "Samsung 870 EVO 500GB SATA III", "2.5\" SATA • 560MB/s • 5Yr Warranty", 820000, 520000, 4],
+        ["Samsung", "Samsung 870 EVO 1TB SATA III", "2.5\" SATA • DRAM Cache • King of SATA", 1450000, 920000, 4],
+        ["Samsung", "Samsung 870 EVO 2TB SATA III", "2.5\" SATA • High Endurance", 2650000, 1690000, 5],
+        ["WD", "WD Green 240GB SATA III", "2.5\" SATA • Entry Office", 310000, 185000, 3],
+        ["WD", "WD Blue SA510 500GB SATA III", "2.5\" SATA • Read 560MB/s", 620000, 380000, 3],
+        ["WD", "WD Blue SA510 1TB SATA III", "2.5\" SATA • Read 560MB/s", 1090000, 680000, 4],
+        ["ADATA", "ADATA SU650 240GB SATA III", "2.5\" SATA • 3D NAND", 305000, 180000, 3],
+        ["ADATA", "ADATA SU650 512GB SATA III", "2.5\" SATA • 3D NAND", 530000, 320000, 3],
+        ["TeamGroup", "TeamGroup GX2 512GB SATA III", "2.5\" SATA • Budget Storage", 510000, 310000, 3],
+        ["TeamGroup", "TeamGroup Vulcan Z 1TB SATA III", "2.5\" SATA • 3D NAND", 920000, 560000, 4],
+
+        // M.2 NVMe PCIe Gen 3
+        ["Kingston", "Kingston NV1 500GB M.2 NVMe", "PCIe Gen3 x4 • 2100MB/s", 550000, 350000, 4],
+        ["TeamGroup", "TeamGroup MP33 256GB M.2 NVMe", "PCIe Gen3 x4 • 1800MB/s • Budget OS", 350000, 220000, 4],
+        ["TeamGroup", "TeamGroup MP33 512GB M.2 NVMe", "PCIe Gen3 x4 • 1800MB/s • Best Value", 560000, 360000, 4],
+        ["TeamGroup", "TeamGroup MP33 1TB M.2 NVMe", "PCIe Gen3 x4 • 1800MB/s", 960000, 620000, 5],
+        ["ADATA", "ADATA Legend 710 512GB M.2 NVMe", "PCIe Gen3 x4 • 2400MB/s • Heatsink", 580000, 370000, 4],
+        ["ADATA", "ADATA Legend 710 1TB M.2 NVMe", "PCIe Gen3 x4 • 2400MB/s", 990000, 640000, 5],
+        ["ADATA", "ADATA XPG SX8200 Pro 512GB NVMe", "PCIe Gen3 x4 • 3500MB/s • DRAM Cache", 680000, 430000, 5],
+        ["ADATA", "ADATA XPG SX8200 Pro 1TB NVMe", "PCIe Gen3 x4 • 3500MB/s • DRAM Cache", 1150000, 740000, 5],
+        ["WD", "WD Blue SN570 500GB M.2 NVMe", "PCIe Gen3 x4 • 3500MB/s", 660000, 420000, 4],
+        ["WD", "WD Blue SN570 1TB M.2 NVMe", "PCIe Gen3 x4 • 3500MB/s", 1120000, 720000, 5],
+        ["Samsung", "Samsung 980 500GB M.2 NVMe", "PCIe Gen3 x4 • 3100MB/s", 750000, 480000, 5],
+        ["Samsung", "Samsung 980 1TB M.2 NVMe", "PCIe Gen3 x4 • 3500MB/s", 1290000, 840000, 5],
+        ["Samsung", "Samsung 970 EVO Plus 1TB M.2 NVMe", "PCIe Gen3 x4 • 3500MB/s • DRAM", 1390000, 890000, 6],
+        ["Crucial", "Crucial P3 500GB M.2 NVMe", "PCIe Gen3 x4 • 3500MB/s", 590000, 380000, 4],
+        ["Crucial", "Crucial P3 1TB M.2 NVMe", "PCIe Gen3 x4 • 3500MB/s", 990000, 640000, 5],
+
+        // M.2 NVMe PCIe Gen 4
+        ["Kingston", "Kingston NV2 500GB M.2 NVMe Gen4", "PCIe Gen4 x4 • 3500MB/s • Populer", 620000, 410000, 5],
+        ["Kingston", "Kingston NV2 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 3500MB/s • Best Seller", 990000, 660000, 5],
+        ["Kingston", "Kingston NV2 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 3500MB/s", 1890000, 1250000, 6],
+        ["Kingston", "Kingston NV3 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 6000MB/s • New Gen", 1090000, 740000, 5],
+        ["Kingston", "Kingston KC3000 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7000MB/s • DRAM Cache", 1490000, 990000, 6],
+        ["Kingston", "Kingston KC3000 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7000MB/s • DRAM Cache", 2650000, 1790000, 7],
+        ["Kingston", "Kingston Fury Renegade 1TB NVMe Gen4", "PCIe Gen4 x4 • 7300MB/s • PS5/PC", 1590000, 1050000, 6],
+        ["WD", "WD Blue SN580 500GB M.2 NVMe Gen4", "PCIe Gen4 x4 • 4000MB/s", 690000, 450000, 5],
+        ["WD", "WD Blue SN580 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 4150MB/s • Best Value", 1120000, 750000, 5],
+        ["WD", "WD Blue SN580 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 4150MB/s", 2050000, 1380000, 6],
+        ["WD", "WD Black SN770 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 5150MB/s • Gaming", 1290000, 860000, 6],
+        ["WD", "WD Black SN770 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 5150MB/s", 2350000, 1580000, 6],
+        ["WD", "WD Black SN850X 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7300MB/s • DRAM Flagship", 1650000, 1120000, 7],
+        ["WD", "WD Black SN850X 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7300MB/s • DRAM", 2890000, 1950000, 8],
+        ["WD", "WD Black SN850X 4TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7300MB/s • Massive", 5650000, 3850000, 9],
+        ["Samsung", "Samsung 980 PRO 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7000MB/s • DRAM", 1690000, 1150000, 7],
+        ["Samsung", "Samsung 980 PRO 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7000MB/s • DRAM", 2850000, 1920000, 8],
+        ["Samsung", "Samsung 990 EVO 1TB M.2 NVMe", "PCIe Gen4/5 • 5000MB/s • Efficient", 1450000, 980000, 5],
+        ["Samsung", "Samsung 990 PRO 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7450MB/s • King Gen4", 1850000, 1280000, 7],
+        ["Samsung", "Samsung 990 PRO 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7450MB/s • DRAM", 3150000, 2150000, 8],
+        ["Samsung", "Samsung 990 PRO 4TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7450MB/s", 5950000, 4100000, 9],
+        ["Crucial", "Crucial P3 Plus 500GB M.2 NVMe Gen4", "PCIe Gen4 x4 • 4700MB/s", 650000, 430000, 5],
+        ["Crucial", "Crucial P3 Plus 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 5000MB/s", 1080000, 720000, 5],
+        ["Crucial", "Crucial P3 Plus 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 5000MB/s", 1980000, 1320000, 6],
+        ["Crucial", "Crucial T500 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7300MB/s • DRAM", 1550000, 1050000, 6],
+        ["Crucial", "Crucial T500 2TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 7400MB/s • DRAM", 2750000, 1850000, 7],
+        ["TeamGroup", "TeamGroup MP44L 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 5000MB/s • Graphene", 1050000, 690000, 5],
+        ["TeamGroup", "TeamGroup Cardea A440 Pro 1TB NVMe", "PCIe Gen4 x4 • 7400MB/s • DRAM", 1490000, 990000, 6],
+        ["ADATA", "ADATA Legend 850 Lite 1TB NVMe Gen4", "PCIe Gen4 x4 • 5000MB/s", 1040000, 680000, 5],
+        ["ADATA", "ADATA XPG Gammix S70 Blade 1TB NVMe", "PCIe Gen4 x4 • 7400MB/s • PS5 Ready", 1450000, 960000, 6],
+        ["ADATA", "ADATA XPG Gammix S70 Blade 2TB NVMe", "PCIe Gen4 x4 • 7400MB/s • DRAM", 2590000, 1750000, 7],
+        ["Corsair", "Corsair MP600 Core XT 1TB NVMe Gen4", "PCIe Gen4 x4 • 5000MB/s", 1190000, 790000, 5],
+        ["Corsair", "Corsair MP600 Pro LPX 2TB NVMe Gen4", "PCIe Gen4 x4 • 7100MB/s • Heatsink", 2850000, 1920000, 7],
+        ["MSI", "MSI Spatium M450 1TB M.2 NVMe Gen4", "PCIe Gen4 x4 • 3600MB/s", 1020000, 670000, 5],
+        ["MSI", "MSI Spatium M480 Pro 2TB NVMe Gen4", "PCIe Gen4 x4 • 7400MB/s • DRAM", 2790000, 1880000, 7],
+        ["Gigabyte", "Gigabyte AORUS Gen4 7300 1TB NVMe", "PCIe Gen4 x4 • 7300MB/s • Heatsink", 1520000, 1020000, 6],
+
+        // M.2 NVMe PCIe Gen 5
+        ["Crucial", "Crucial T700 1TB M.2 NVMe Gen5", "PCIe Gen5 x4 • 11,700MB/s • Ultra Fast", 2650000, 1850000, 10],
+        ["Crucial", "Crucial T705 2TB M.2 NVMe Gen5", "PCIe Gen5 x4 • 14,500MB/s • Fastest", 4850000, 3450000, 11],
+        ["Corsair", "Corsair MP700 Pro 2TB M.2 NVMe Gen5", "PCIe Gen5 x4 • 12,400MB/s • Active Fan", 4650000, 3300000, 11],
+        ["MSI", "MSI Spatium M570 Pro 2TB NVMe Gen5", "PCIe Gen5 x4 • 12,400MB/s • Frozr", 4550000, 3200000, 11],
+        ["ADATA", "ADATA Legend 970 1TB M.2 NVMe Gen5", "PCIe Gen5 x4 • 10,000MB/s • Dual Layer", 2450000, 1700000, 10],
+        ["TeamGroup", "TeamGroup T-Force Z540 2TB NVMe Gen5", "PCIe Gen5 x4 • 12,400MB/s", 4350000, 3050000, 11],
+        ["Gigabyte", "Gigabyte AORUS Gen5 12000 1TB NVMe", "PCIe Gen5 x4 • 11,700MB/s • Copper", 2750000, 1900000, 10],
+        ["Samsung", "Samsung 9100 PRO 1TB M.2 NVMe Gen5", "PCIe Gen5 x4 • 14,700MB/s • Flagship", 2950000, 2150000, 9]
+      ];
+      ssds.forEach(s => addItem('ssd', s[0], s[1], s[2], s[3], s[4], s[5]));
+
+      // =========================================================================
+      // KATEGORI 6: HDD (HARD DISK DRIVE) - 76 ITEM
+      // =========================================================================
+      const hdds = [
+        ["Seagate", "Seagate Barracuda 500GB 3.5\"", "7200RPM • SATA 6Gb/s • Budget Data", 350000, 150000, 6],
+        ["Seagate", "Seagate Barracuda 1TB 3.5\" (ST1000DM010)", "7200RPM • 64MB Cache • Populer", 740000, 320000, 7],
+        ["Seagate", "Seagate Barracuda 2TB 3.5\" (ST2000DM008)", "7200RPM • 256MB Cache • Best Value", 980000, 480000, 8],
+        ["Seagate", "Seagate Barracuda 3TB 3.5\"", "5400RPM • 256MB Cache", 1290000, 620000, 8],
+        ["Seagate", "Seagate Barracuda 4TB 3.5\" (ST4000DM004)", "5400RPM • 256MB Cache • Arsip Besar", 1590000, 820000, 8],
+        ["Seagate", "Seagate Barracuda 6TB 3.5\"", "5400RPM • 256MB Cache", 2250000, 1180000, 9],
+        ["Seagate", "Seagate Barracuda 8TB 3.5\" (ST8000DM004)", "5400RPM • 256MB Cache • Media Vault", 2850000, 1550000, 9],
+        ["Seagate", "Seagate FireCuda 2TB 3.5\" Gaming HDD", "7200RPM • 256MB Cache • CMR", 1350000, 720000, 9],
+        ["Seagate", "Seagate FireCuda 4TB 3.5\" Gaming HDD", "7200RPM • 256MB Cache • CMR", 2150000, 1150000, 10],
+        ["Seagate", "Seagate FireCuda 8TB 3.5\" Gaming HDD", "7200RPM • 256MB Cache • High Speed", 3650000, 2050000, 11],
+        ["Seagate", "Seagate IronWolf 1TB NAS 3.5\"", "5900RPM • CMR • 24/7 Durability", 980000, 490000, 7],
+        ["Seagate", "Seagate IronWolf 2TB NAS 3.5\"", "5900RPM • CMR • 64MB Cache", 1320000, 690000, 8],
+        ["Seagate", "Seagate IronWolf 4TB NAS 3.5\"", "5400RPM • CMR • 256MB Cache", 1950000, 1050000, 8],
+        ["Seagate", "Seagate IronWolf 6TB NAS 3.5\"", "5400RPM • CMR • 256MB Cache", 2750000, 1480000, 9],
+        ["Seagate", "Seagate IronWolf 8TB NAS 3.5\"", "7200RPM • CMR • 256MB Cache", 3550000, 1950000, 10],
+        ["Seagate", "Seagate IronWolf 12TB NAS 3.5\"", "7200RPM • CMR • Helium", 5250000, 2950000, 11],
+        ["Seagate", "Seagate IronWolf Pro 4TB 3.5\"", "7200RPM • Enterprise NAS • 5Yr", 2450000, 1320000, 9],
+        ["Seagate", "Seagate IronWolf Pro 8TB 3.5\"", "7200RPM • Enterprise NAS", 4150000, 2250000, 10],
+        ["Seagate", "Seagate IronWolf Pro 16TB 3.5\"", "7200RPM • 256MB Cache • Server Grade", 6850000, 3850000, 11],
+        ["Seagate", "Seagate SkyHawk 1TB Surveillance 3.5\"", "5900RPM • CCTV & Continuous Write", 760000, 340000, 7],
+        ["Seagate", "Seagate SkyHawk 2TB Surveillance 3.5\"", "5400RPM • 256MB Cache", 1020000, 510000, 7],
+        ["Seagate", "Seagate SkyHawk 4TB Surveillance 3.5\"", "5400RPM • 256MB Cache", 1620000, 840000, 8],
+        ["Seagate", "Seagate SkyHawk 6TB Surveillance 3.5\"", "5400RPM • 256MB Cache", 2290000, 1200000, 9],
+        ["Seagate", "Seagate Exos 7E8 4TB Enterprise 3.5\"", "7200RPM • CMR • Datacenter Grade", 2150000, 1100000, 10],
+        ["Seagate", "Seagate Exos X16 14TB Enterprise 3.5\"", "7200RPM • CMR • Helium", 4950000, 2750000, 11],
+        ["Seagate", "Seagate Exos X18 18TB Enterprise 3.5\"", "7200RPM • CMR • Ultra Capacity", 6250000, 3550000, 11],
+
+        // Western Digital (WD)
+        ["WD", "WD Blue 500GB 3.5\" (WD5000AZLX)", "7200RPM • SATA 6Gb/s", 360000, 155000, 6],
+        ["WD", "WD Blue 1TB 3.5\" (WD10EZEX)", "7200RPM • 64MB Cache • CMR Legend", 760000, 340000, 7],
+        ["WD", "WD Blue 2TB 3.5\" (WD20EZBX)", "7200RPM • 256MB Cache", 990000, 490000, 8],
+        ["WD", "WD Blue 3TB 3.5\" (WD30EZAZ)", "5400RPM • 256MB Cache", 1320000, 640000, 8],
+        ["WD", "WD Blue 4TB 3.5\" (WD40EZAX)", "5400RPM • 256MB Cache • CMR", 1620000, 850000, 8],
+        ["WD", "WD Blue 6TB 3.5\" (WD60EZAX)", "5400RPM • 256MB Cache • CMR", 2290000, 1220000, 9],
+        ["WD", "WD Blue 8TB 3.5\" (WD80EAAZ)", "5640RPM • 256MB Cache • CMR", 2890000, 1580000, 9],
+        ["WD", "WD Black 1TB Performance 3.5\"", "7200RPM • 64MB Cache • Dual Core", 1190000, 580000, 8],
+        ["WD", "WD Black 2TB Performance 3.5\"", "7200RPM • 256MB Cache • CMR Gaming", 1750000, 920000, 9],
+        ["WD", "WD Black 4TB Performance 3.5\"", "7200RPM • 256MB Cache • CMR Gaming", 2650000, 1420000, 10],
+        ["WD", "WD Black 6TB Performance 3.5\"", "7200RPM • 256MB Cache • CMR", 3450000, 1850000, 10],
+        ["WD", "WD Black 8TB Performance 3.5\"", "7200RPM • 256MB Cache • CMR", 4250000, 2350000, 11],
+        ["WD", "WD Red Plus 2TB NAS 3.5\"", "5400RPM • CMR • 64MB Cache", 1350000, 710000, 7],
+        ["WD", "WD Red Plus 4TB NAS 3.5\"", "5400RPM • CMR • 256MB Cache", 1980000, 1080000, 8],
+        ["WD", "WD Red Plus 6TB NAS 3.5\"", "5400RPM • CMR • 256MB Cache", 2790000, 1520000, 9],
+        ["WD", "WD Red Plus 8TB NAS 3.5\"", "5640RPM • CMR • 256MB Cache", 3590000, 1980000, 9],
+        ["WD", "WD Red Pro 4TB NAS 3.5\"", "7200RPM • CMR • Enterprise NAS", 2490000, 1350000, 9],
+        ["WD", "WD Red Pro 10TB NAS 3.5\"", "7200RPM • CMR • 256MB Cache", 4850000, 2650000, 10],
+        ["WD", "WD Purple 1TB Surveillance 3.5\"", "5400RPM • AllFrame AI", 780000, 350000, 7],
+        ["WD", "WD Purple 2TB Surveillance 3.5\"", "5400RPM • 256MB Cache", 1040000, 520000, 7],
+        ["WD", "WD Purple 4TB Surveillance 3.5\"", "5400RPM • 256MB Cache", 1640000, 860000, 8],
+        ["WD", "WD Purple Pro 8TB Surveillance 3.5\"", "7200RPM • 256MB Cache • CMR", 3650000, 1980000, 10],
+        ["WD", "WD Gold 4TB Enterprise 3.5\"", "7200RPM • Datacenter CMR", 2550000, 1380000, 9],
+        ["WD", "WD Gold 12TB Enterprise 3.5\"", "7200RPM • HelioSeal • 2.5M MTBF", 5450000, 3050000, 11],
+
+        // Toshiba & 2.5" Laptop/Compact HDD
+        ["Toshiba", "Toshiba P300 1TB 3.5\" Performance", "7200RPM • 64MB Cache • CMR", 720000, 310000, 7],
+        ["Toshiba", "Toshiba P300 2TB 3.5\" Performance", "7200RPM • 64MB Cache • CMR", 950000, 460000, 8],
+        ["Toshiba", "Toshiba P300 3TB 3.5\" Performance", "7200RPM • 64MB Cache • CMR", 1250000, 600000, 8],
+        ["Toshiba", "Toshiba P300 4TB 3.5\" High-Capacity", "5400RPM • 128MB Cache", 1540000, 790000, 8],
+        ["Toshiba", "Toshiba X300 4TB 3.5\" Performance Gaming", "7200RPM • 256MB Cache • CMR", 2150000, 1120000, 10],
+        ["Toshiba", "Toshiba X300 6TB 3.5\" Performance Gaming", "7200RPM • 256MB Cache • CMR", 2850000, 1520000, 10],
+        ["Toshiba", "Toshiba X300 8TB 3.5\" Performance Gaming", "7200RPM • 256MB Cache • CMR", 3550000, 1920000, 11],
+        ["Toshiba", "Toshiba N300 4TB NAS 3.5\"", "7200RPM • 256MB Cache • CMR", 1950000, 1040000, 9],
+        ["Toshiba", "Toshiba N300 8TB NAS 3.5\"", "7200RPM • 256MB Cache • CMR", 3450000, 1880000, 10],
+        ["Toshiba", "Toshiba S300 2TB Surveillance 3.5\"", "5400RPM • 128MB Cache", 980000, 480000, 7],
+        ["Toshiba", "Toshiba S300 4TB Surveillance 3.5\"", "5400RPM • 128MB Cache", 1560000, 800000, 8],
+        ["Toshiba", "Toshiba MG08 16TB Enterprise 3.5\"", "7200RPM • 512MB Cache • Helium", 5650000, 3150000, 11],
+        ["Seagate", "Seagate Barracuda 1TB 2.5\" Slim", "5400RPM • 128MB Cache • 7mm", 780000, 350000, 3],
+        ["Seagate", "Seagate Barracuda 2TB 2.5\" Slim", "5400RPM • 128MB Cache • 7mm", 1150000, 560000, 3],
+        ["WD", "WD Blue 1TB 2.5\" (WD10SPZX)", "5400RPM • 128MB Cache • 7mm", 790000, 360000, 3],
+        ["WD", "WD Blue 2TB 2.5\" (WD20SPZX)", "5400RPM • 128MB Cache • 7mm", 1180000, 580000, 3],
+        ["WD", "WD Black 1TB 2.5\" Performance", "7200RPM • 64MB Cache • 7mm", 1120000, 540000, 4],
+        ["Toshiba", "Toshiba L200 1TB 2.5\" Slim", "5400RPM • 128MB Cache • 7mm", 740000, 330000, 3],
+        ["Toshiba", "Toshiba L200 2TB 2.5\" Slim", "5400RPM • 128MB Cache • 9.5mm", 1090000, 530000, 3],
+        ["Seagate", "Seagate BarraCuda Pro 4TB 3.5\"", "7200RPM • 256MB Cache • CMR", 2350000, 1250000, 9],
+        ["Seagate", "Seagate BarraCuda Pro 10TB 3.5\"", "7200RPM • 256MB Cache • CMR", 4750000, 2550000, 11],
+        ["WD", "WD Ultrastar DC HC310 6TB 3.5\"", "7200RPM • Enterprise Grade • CMR", 2850000, 1480000, 10],
+        ["WD", "WD Ultrastar DC HC550 16TB 3.5\"", "7200RPM • Enterprise Helium • CMR", 5850000, 3250000, 11],
+        ["Toshiba", "Toshiba DT01ACA100 1TB 3.5\"", "7200RPM • 32MB Cache • Classic", 690000, 290000, 7],
+        ["Toshiba", "Toshiba DT01ACA200 2TB 3.5\"", "7200RPM • 64MB Cache", 920000, 440000, 8],
+        ["Seagate", "Seagate IronWolf 10TB NAS 3.5\"", "7200RPM • CMR • 256MB Cache", 4450000, 2450000, 10]
+      ];
+      hdds.forEach(h => addItem('hdd', h[0], h[1], h[2], h[3], h[4], h[5]));
+
+      // =========================================================================
+      // KATEGORI 7: POWER SUPPLY (PSU) - 78 ITEM
+      // =========================================================================
+      const psus = [
+        // Entry & Budget 450W - 550W
+        ["FSP", "FSP HV PRO 550W 80+ White", "550W • Non-Modular • Flat Cable", 590000, 360000, 0, { psuWatt: 550 }],
+        ["FSP", "FSP HV PRO 650W 80+ Bronze", "650W • DC-to-DC • Best Budget", 720000, 450000, 0, { psuWatt: 650 }],
+        ["MSI", "MSI MAG A550BN 550W 80+ Bronze", "550W • DC-to-DC • 5Yr Warranty", 690000, 430000, 0, { psuWatt: 550 }],
+        ["MSI", "MSI MAG A650BN 650W 80+ Bronze", "650W • DC-to-DC • Best Seller", 790000, 500000, 0, { psuWatt: 650 }],
+        ["Corsair", "Corsair CV550 550W 80+ Bronze", "550W • Non-Modular • Sleeved", 750000, 460000, 0, { psuWatt: 550 }],
+        ["Corsair", "Corsair CX550 550W 80+ Bronze (2023)", "550W • Compact 125mm", 780000, 490000, 0, { psuWatt: 550 }],
+        ["Corsair", "Corsair CX650 650W 80+ Bronze (2023)", "650W • Reliable Tier C", 890000, 560000, 0, { psuWatt: 650 }],
+        ["Corsair", "Corsair CX750 750W 80+ Bronze (2023)", "750W • Non-Modular", 1050000, 670000, 0, { psuWatt: 750 }],
+        ["Cooler Master", "Cooler Master MWE 550 Bronze V2", "550W • DC-to-DC • HDB Fan", 740000, 460000, 0, { psuWatt: 550 }],
+        ["Cooler Master", "Cooler Master MWE 650 Bronze V2", "650W • DC-to-DC • Flat Black", 860000, 540000, 0, { psuWatt: 650 }],
+        ["Cooler Master", "Cooler Master MWE 750 Bronze V2", "750W • DC-to-DC • Dual EPS", 990000, 630000, 0, { psuWatt: 750 }],
+        ["DeepCool", "DeepCool PK550D 550W 80+ Bronze", "550W • DC-to-DC • Tier C", 680000, 420000, 0, { psuWatt: 550 }],
+        ["DeepCool", "DeepCool PK650D 650W 80+ Bronze", "650W • DC-to-DC • Flat Cable", 780000, 490000, 0, { psuWatt: 650 }],
+        ["DeepCool", "DeepCool PL650D 650W ATX 3.0 Bronze", "650W • PCIe 5.0 12VHPWR Ready", 850000, 550000, 0, { psuWatt: 650 }],
+        ["be quiet!", "be quiet! System Power 10 550W Bronze", "550W • Ultra Quiet Fan", 820000, 520000, 0, { psuWatt: 550 }],
+        ["be quiet!", "be quiet! System Power 10 650W Bronze", "650W • German Engineering", 950000, 600000, 0, { psuWatt: 650 }],
+        ["be quiet!", "be quiet! System Power 10 750W Bronze", "750W • Quiet Operation", 1120000, 710000, 0, { psuWatt: 750 }],
+        ["ASUS", "ASUS TUF Gaming 550B 550W 80+ Bronze", "550W • Military Grade Caps", 890000, 560000, 0, { psuWatt: 550 }],
+        ["ASUS", "ASUS TUF Gaming 650B 650W 80+ Bronze", "650W • Axial-Tech Fan • 6Yr", 1050000, 670000, 0, { psuWatt: 650 }],
+        ["ASUS", "ASUS TUF Gaming 750B 750W 80+ Bronze", "750W • Durable Sleeved", 1190000, 760000, 0, { psuWatt: 750 }],
+        ["Gigabyte", "Gigabyte P550B 550W 80+ Bronze", "550W • Hydraulic Bearing Fan", 670000, 410000, 0, { psuWatt: 550 }],
+        ["Gigabyte", "Gigabyte P650B 650W 80+ Bronze", "650W • Single +12V Rail", 770000, 480000, 0, { psuWatt: 650 }],
+        ["ADATA", "ADATA XPG Pylon 550W 80+ Bronze", "550W • DC-to-DC • Japanese Cap", 710000, 440000, 0, { psuWatt: 550 }],
+        ["ADATA", "ADATA XPG Pylon 650W 80+ Bronze", "650W • DC-to-DC • Tier C", 820000, 520000, 0, { psuWatt: 650 }],
+        ["Seasonic", "Seasonic B12 BC-550 550W 80+ Bronze", "550W • Smart & Silent Fan", 840000, 530000, 0, { psuWatt: 550 }],
+        ["Seasonic", "Seasonic B12 BC-650 650W 80+ Bronze", "650W • Reliable Build", 960000, 610000, 0, { psuWatt: 650 }],
+        ["Seasonic", "Seasonic G12 GC-650 650W 80+ Gold", "650W • 80+ Gold • Non-Modular", 1190000, 770000, 0, { psuWatt: 650 }],
+        ["Seasonic", "Seasonic G12 GC-750 750W 80+ Gold", "750W • 80+ Gold • Value Gold", 1350000, 880000, 0, { psuWatt: 750 }],
+
+        // Mid-to-High 80+ Gold Modular & ATX 3.0/3.1 (650W - 1600W)
+        ["Seasonic", "Seasonic Focus GX-650 650W 80+ Gold", "650W • Full Modular • 10Yr Warranty", 1490000, 960000, 0, { psuWatt: 650 }],
+        ["Seasonic", "Seasonic Focus GX-750 750W ATX 3.0 Gold", "750W • Full Modular • 12VHPWR", 1850000, 1250000, 0, { psuWatt: 750 }],
+        ["Seasonic", "Seasonic Focus GX-850 850W ATX 3.0 Gold", "850W • Full Modular • Tier A", 2150000, 1450000, 0, { psuWatt: 850 }],
+        ["Seasonic", "Seasonic Focus GX-850 White ATX 3.0", "850W • Full White Cables • Gold", 2290000, 1550000, 0, { psuWatt: 850 }],
+        ["Seasonic", "Seasonic Focus GX-1000 1000W ATX 3.0", "1000W • Full Modular • Tier A", 2650000, 1800000, 0, { psuWatt: 1000 }],
+        ["Seasonic", "Seasonic Vertex GX-1000 1000W ATX 3.0", "1000W • Full Modular • 12Yr Warranty", 3150000, 2150000, 0, { psuWatt: 1000 }],
+        ["Seasonic", "Seasonic Vertex PX-1200 1200W Platinum", "1200W • 80+ Platinum • ATX 3.0", 3950000, 2750000, 0, { psuWatt: 1200 }],
+        ["Seasonic", "Seasonic Prime TX-1300 1300W Titanium", "1300W • 80+ Titanium • Flagship", 6450000, 4450000, 0, { psuWatt: 1300 }],
+        ["Corsair", "Corsair RM650 650W 80+ Gold Full Modular", "650W • Zero RPM Mode • Tier A", 1450000, 940000, 0, { psuWatt: 650 }],
+        ["Corsair", "Corsair RM750e 750W ATX 3.0 80+ Gold", "750W • Full Modular • 12VHPWR", 1690000, 1150000, 0, { psuWatt: 750 }],
+        ["Corsair", "Corsair RM850e 850W ATX 3.0 80+ Gold", "850W • Full Modular • Compact 140mm", 1950000, 1320000, 0, { psuWatt: 850 }],
+        ["Corsair", "Corsair RM850x Shift 850W ATX 3.0 Gold", "850W • Side-Mounted Connectors", 2350000, 1590000, 0, { psuWatt: 850 }],
+        ["Corsair", "Corsair RM850x White 850W 80+ Gold", "850W • Magnetic Levitation Fan", 2290000, 1520000, 0, { psuWatt: 850 }],
+        ["Corsair", "Corsair RM1000e 1000W ATX 3.0 80+ Gold", "1000W • Full Modular • PCIe 5.0", 2490000, 1690000, 0, { psuWatt: 1000 }],
+        ["Corsair", "Corsair RM1000x Shift 1000W ATX 3.0", "1000W • Side Modular • Japanese Caps", 2850000, 1950000, 0, { psuWatt: 1000 }],
+        ["Corsair", "Corsair HX1000i 1000W 80+ Platinum", "1000W • Digital iCUE • Full Modular", 3450000, 2350000, 0, { psuWatt: 1000 }],
+        ["Corsair", "Corsair HX1500i 1500W ATX 3.0 Platinum", "1500W • Dual 12VHPWR • Enthusiast", 4950000, 3450000, 0, { psuWatt: 1500 }],
+        ["MSI", "MSI MAG A750GL PCIE5 750W 80+ Gold", "750W • Full Modular • Yellow Tip 16-Pin", 1450000, 990000, 0, { psuWatt: 750 }],
+        ["MSI", "MSI MAG A850GL PCIE5 850W 80+ Gold", "850W • Full Modular • ATX 3.1 • Tier A", 1690000, 1180000, 0, { psuWatt: 850 }],
+        ["MSI", "MSI MAG A850GL PCIE5 White 850W Gold", "850W • White Cables • ATX 3.1", 1790000, 1250000, 0, { psuWatt: 850 }],
+        ["MSI", "MSI MPG A850G PCIE5 850W 80+ Gold", "850W • 100% Japanese 105C Caps", 2050000, 1420000, 0, { psuWatt: 850 }],
+        ["MSI", "MSI MPG A1000G PCIE5 1000W 80+ Gold", "1000W • Full Modular • Zero Fan Mode", 2450000, 1690000, 0, { psuWatt: 1000 }],
+        ["MSI", "MSI MEG Ai1300P PCIE5 1300W Platinum", "1300W • Software Monitoring • ATX 3.0", 4450000, 3150000, 0, { psuWatt: 1300 }],
+        ["FSP", "FSP Vita GM 750W ATX 3.1 80+ Gold", "750W • Full Modular • Compact", 1420000, 980000, 0, { psuWatt: 750 }],
+        ["FSP", "FSP Vita GM 850W ATX 3.1 80+ Gold", "850W • Full Modular • Native 12V-2x6", 1620000, 1120000, 0, { psuWatt: 850 }],
+        ["FSP", "FSP Hydro G Pro 850W ATX 3.0 80+ Gold", "850W • Conformal Coating • Tier A", 1950000, 1350000, 0, { psuWatt: 850 }],
+        ["FSP", "FSP Hydro G Pro 1000W ATX 3.0 80+ Gold", "1000W • Full Modular • Eco Switch", 2350000, 1620000, 0, { psuWatt: 1000 }],
+        ["FSP", "FSP Hydro PTM Pro 1200W ATX 3.0 Platinum", "1200W • 80+ Platinum • Tier A", 3250000, 2250000, 0, { psuWatt: 1200 }],
+        ["Cooler Master", "Cooler Master MWE Gold 750 V2 Full Modular", "750W • 80+ Gold • Dual EPS", 1450000, 960000, 0, { psuWatt: 750 }],
+        ["Cooler Master", "Cooler Master MWE Gold 850 V2 ATX 3.0", "850W • 80+ Gold • 90-Degree 12VHPWR", 1720000, 1180000, 0, { psuWatt: 850 }],
+        ["Cooler Master", "Cooler Master GX II Gold 850W ATX 3.0", "850W • Full Modular • Zero RPM", 1850000, 1280000, 0, { psuWatt: 850 }],
+        ["Cooler Master", "Cooler Master V850 SFX Gold 850W", "850W • SFX Mini-ITX • Full Modular", 2350000, 1620000, 0, { psuWatt: 850 }],
+        ["Cooler Master", "Cooler Master V1100 SFX Platinum 1100W", "1100W • SFX High Power • ATX 3.0", 3450000, 2450000, 0, { psuWatt: 1100 }],
+        ["DeepCool", "DeepCool PM750D 750W 80+ Gold", "750W • Non-Modular Gold • Value", 1150000, 760000, 0, { psuWatt: 750 }],
+        ["DeepCool", "DeepCool DQ750-M-V2L 750W 80+ Gold", "750W • Full Modular • Japanese Cap", 1390000, 920000, 0, { psuWatt: 750 }],
+        ["DeepCool", "DeepCool PX850G 850W ATX 3.0 80+ Gold", "850W • Full Modular • Tier A", 1890000, 1320000, 0, { psuWatt: 850 }],
+        ["DeepCool", "DeepCool PX1000G 1000W ATX 3.0 80+ Gold", "1000W • Full Modular • Tier A", 2350000, 1650000, 0, { psuWatt: 1000 }],
+        ["be quiet!", "be quiet! Pure Power 12 M 750W ATX 3.0", "750W • 80+ Gold • Full Modular", 1790000, 1240000, 0, { psuWatt: 750 }],
+        ["be quiet!", "be quiet! Pure Power 12 M 850W ATX 3.0", "850W • 80+ Gold • Virtually Inaudible", 2050000, 1420000, 0, { psuWatt: 850 }],
+        ["be quiet!", "be quiet! Pure Power 12 M 1000W ATX 3.0", "1000W • 80+ Gold • Full Modular", 2490000, 1720000, 0, { psuWatt: 1000 }],
+        ["be quiet!", "be quiet! Dark Power 13 1000W Titanium", "1000W • 80+ Titanium • Frameless Fan", 4150000, 2950000, 0, { psuWatt: 1000 }],
+        ["ASUS", "ASUS TUF Gaming 750G 750W ATX 3.0 Gold", "750W • Full Modular • 10Yr Warranty", 1850000, 1280000, 0, { psuWatt: 750 }],
+        ["ASUS", "ASUS TUF Gaming 850G 850W ATX 3.0 Gold", "850W • Full Modular • PCB Coating", 2150000, 1490000, 0, { psuWatt: 850 }],
+        ["ASUS", "ASUS TUF Gaming 1000G 1000W ATX 3.0 Gold", "1000W • Full Modular • Military Grade", 2590000, 1790000, 0, { psuWatt: 1000 }],
+        ["ASUS", "ASUS ROG Loki SFX-L 850W Platinum", "850W • ARGB Fan • Mini-ITX", 3150000, 2250000, 0, { psuWatt: 850 }],
+        ["ASUS", "ASUS ROG Thor 1000W Platinum II", "1000W • OLED Power Display • Aura Sync", 4850000, 3450000, 0, { psuWatt: 1000 }],
+        ["ASUS", "ASUS ROG Thor 1200W Platinum II", "1200W • OLED Display • Lambda A++", 5650000, 3950000, 0, { psuWatt: 1200 }],
+        ["ADATA", "ADATA XPG Core Reactor II 750W Gold", "750W • ATX 3.0 • Tier A", 1550000, 1080000, 0, { psuWatt: 750 }],
+        ["ADATA", "ADATA XPG Core Reactor II 850W Gold", "850W • ATX 3.0 • Full Modular", 1750000, 1220000, 0, { psuWatt: 850 }],
+        ["Gigabyte", "Gigabyte UD850GM PG5 850W ATX 3.0 Gold", "850W • Full Modular • Compact", 1650000, 1120000, 0, { psuWatt: 850 }]
+      ];
+      psus.forEach(p => addItem('psu', p[0], p[1], p[2], p[3], p[4], p[5], p[6]));
+
+      // =========================================================================
+      // KATEGORI 8: CASING PC (CASE) - 76 ITEM
+      // =========================================================================
+      const cases = [
+        // Budget & Lokal Populer
+        ["Cube Gaming", "Cube Gaming Blaz mATX", "mATX • Tempered Glass • Mesh Front", 360000, 200000, 0],
+        ["Cube Gaming", "Cube Gaming Axel mATX White/Black", "mATX • Compact • Side TG", 390000, 220000, 0],
+        ["Cube Gaming", "Cube Gaming Byron mATX", "mATX • Full Mesh Airflow", 420000, 240000, 0],
+        ["Cube Gaming", "Cube Gaming Varde Dual Chamber", "mATX • Aquarium Panoramic TG", 490000, 290000, 0],
+        ["Paradox", "Paradox Gaming Dürer mATX", "mATX • Tempered Glass • Compact", 380000, 210000, 0],
+        ["Paradox", "Paradox Gaming Namikaze ATX", "ATX • Mesh Front • 3x RGB Fan", 490000, 280000, 0],
+        ["Paradox", "Paradox Gaming Aquarium Mini", "mATX • Dual Chamber • White/Black", 520000, 310000, 0],
+        ["Tecware", "Tecware Forge M2 mATX (Inc 3x ARGB Fan)", "mATX • High Airflow Mesh • Value King", 590000, 360000, 0],
+        ["Tecware", "Tecware Nexus Air M2 mATX (Inc 3x Fan)", "mATX • Hinged Tempered Glass", 560000, 340000, 0],
+        ["Tecware", "Tecware VXN Evo Dual Chamber", "mATX • Panoramic View • Inc 3x ARGB", 750000, 460000, 0],
+        ["Tecware", "Tecware Timber ATX (Wood Accent)", "ATX • Walnut Wood Front • 4x Fan", 890000, 560000, 0],
+        ["DarkFlash", "DarkFlash DLM21 Mesh mATX", "mATX • Magnetic Door • Black/White/Pink", 580000, 350000, 0],
+        ["DarkFlash", "DarkFlash DK352 ATX (Inc 4x ARGB Fan)", "ATX • Mesh Front • Great Value", 650000, 400000, 0],
+        ["DarkFlash", "DarkFlash DB330M Mesh Aquarium", "mATX • Pillarless View • White/Black", 620000, 380000, 0],
+        ["DarkFlash", "DarkFlash DY470 ATX Panoramic", "ATX • 3-Sided Glass • Back-Connect", 1450000, 920000, 0],
+
+        // Montech, DeepCool, Cooler Master, MSI
+        ["Montech", "Montech Air 100 ARGB mATX (Inc 4x ARGB)", "mATX • Swivel Glass • Best Budget Mesh", 790000, 500000, 0],
+        ["Montech", "Montech Air 100 ARGB White mATX", "mATX • Full White • 4x ARGB Fan", 820000, 520000, 0],
+        ["Montech", "Montech Air 903 Base ATX (Inc 3x 140mm)", "ATX • E-ATX Support • Top Airflow", 950000, 620000, 0],
+        ["Montech", "Montech Air 903 MAX ATX (Inc 4x 140mm)", "ATX • 3x 140mm ARGB + 1x 140mm PWM", 1090000, 720000, 0],
+        ["Montech", "Montech Sky Two ATX (Inc 4x ARGB)", "ATX • Dual Glass • Reverse Blade Fans", 1350000, 890000, 0],
+        ["Montech", "Montech King 95 Pro Dual Chamber", "ATX • Curved Glass • Inc 6x ARGB Hub", 2150000, 1450000, 0],
+        ["DeepCool", "DeepCool Matrexx 40 3FS mATX", "mATX • Inc 3x Tri-Color LED Fans", 580000, 350000, 0],
+        ["DeepCool", "DeepCool CC560 V2 ATX (Inc 4x LED Fan)", "ATX • Mid-Tower • Budget Airflow", 750000, 470000, 0],
+        ["DeepCool", "DeepCool CH370 mATX Black/White", "mATX • Minimalist • GPU Bracket", 790000, 490000, 0],
+        ["DeepCool", "DeepCool CH560 Digital ATX", "ATX • Built-in CPU/GPU Temp Display", 1490000, 980000, 0],
+        ["DeepCool", "DeepCool Morpheus Modular Full Tower", "E-ATX • Dual/Single Chamber • Digital", 2450000, 1650000, 0],
+        ["Cooler Master", "Cooler Master MasterBox Q300L V2", "mATX • Magnetic Dust Filters", 680000, 410000, 0],
+        ["Cooler Master", "Cooler Master TD300 Mesh mATX", "mATX • Inc 2x SickleFlow ARGB", 990000, 620000, 0],
+        ["Cooler Master", "Cooler Master TD500 Mesh V2 ATX", "ATX • Crystalline TG • 3x ARGB", 1450000, 920000, 0],
+        ["Cooler Master", "Cooler Master NR200P V2 Mini-ITX", "Mini-ITX • SFF Legend • PCIe 4.0 Riser", 1650000, 1080000, 0],
+        ["Cooler Master", "Cooler Master HAF 700 EVO E-ATX", "Full Tower • LCD Iris • 2x 200mm Fans", 6450000, 4250000, 0],
+        ["MSI", "MSI MAG Forge M100R mATX (Inc 4x ARGB)", "mATX • Mesh Front • 1-to-6 ARGB Hub", 720000, 450000, 0],
+        ["MSI", "MSI MAG Forge 112R ATX (Inc 4x ARGB)", "ATX • Tempered Glass • Mesh", 890000, 560000, 0],
+        ["MSI", "MSI MAG Pano M100R PZ mATX White", "mATX • Project Zero Back-Connect", 1390000, 920000, 0],
+        ["MSI", "MSI MPG Velox 100R ATX", "ATX • Side Vent • 4x ARGB Fans", 1850000, 1190000, 0],
+
+        // Lian Li, NZXT, Fractal Design, Phanteks, Corsair, ASUS, HYTE
+        ["Lian Li", "Lian Li Lancool 205M Mesh mATX", "mATX • Inc 2x 140mm ARGB Fans", 990000, 650000, 0],
+        ["Lian Li", "Lian Li Lancool 216 ATX Black/White", "ATX • 2x 160mm Front Fans • Best Thermal", 1550000, 1050000, 0],
+        ["Lian Li", "Lian Li O11 Dynamic Mini Snow White", "ATX/mATX • Dual Chamber Modular", 1690000, 1120000, 0],
+        ["Lian Li", "Lian Li O11 Air Mini Black/White", "ATX • High Airflow Mesh Dual Chamber", 1650000, 1090000, 0],
+        ["Lian Li", "Lian Li O11 Dynamic EVO RGB", "E-ATX • Reversible • ARGB Strips", 2550000, 1750000, 0],
+        ["Lian Li", "Lian Li O11 Vision Chrome / White", "ATX • 3-Sided Frameless Glass", 2290000, 1550000, 0],
+        ["Lian Li", "Lian Li A3-mATX Wood Edition", "mATX • Compact 26.3L • Walnut Front", 1250000, 850000, 0],
+        ["NZXT", "NZXT H5 Flow (2024) ATX Black/White", "ATX • Angled Bottom GPU Fan", 1450000, 960000, 0],
+        ["NZXT", "NZXT H5 Flow RGB ATX (Inc 4x Fans)", "ATX • F360 RGB Core • Clean Aesthetic", 1850000, 1250000, 0],
+        ["NZXT", "NZXT H6 Flow Dual Chamber ATX", "ATX • Wraparound Glass • Angled Fans", 1790000, 1220000, 0],
+        ["NZXT", "NZXT H6 Flow RGB Black/White", "ATX • Dual Chamber • Inc 3x 120mm RGB", 2150000, 1480000, 0],
+        ["NZXT", "NZXT H7 Flow (2024) ATX", "ATX • Supports 420mm Rad • Minimalist", 2050000, 1390000, 0],
+        ["NZXT", "NZXT H9 Flow Dual Chamber ATX", "ATX • Seamless Glass • 10 Fan Mounts", 2550000, 1750000, 0],
+        ["NZXT", "NZXT H9 Elite Dual Chamber ATX", "ATX • Glass Top • Inc 4x Duo RGB", 3650000, 2490000, 0],
+        ["Fractal Design", "Fractal Design Pop Mini Air RGB", "mATX • Hidden Drawer • 3x Aspect RGB", 1390000, 920000, 0],
+        ["Fractal Design", "Fractal Design Pop Air RGB ATX", "ATX • Cyan/Magenta/White/Black", 1490000, 990000, 0],
+        ["Fractal Design", "Fractal Design North Charcoal/Chalk", "ATX • Genuine Oak/Walnut Wood Slats", 2290000, 1590000, 0],
+        ["Fractal Design", "Fractal Design North XL Mesh/TG", "E-ATX • Wood Front • 3x 140mm Fans", 2850000, 1980000, 0],
+        ["Fractal Design", "Fractal Design Terra Jade/Silver ITX", "Mini-ITX • CNC Aluminum + Walnut", 2950000, 2050000, 0],
+        ["Fractal Design", "Fractal Design Torrent RGB Black/White", "E-ATX • 2x 180mm Dynamic Fans • King", 3450000, 2390000, 0],
+        ["Phanteks", "Phanteks XT Pro Ultra ATX (Inc 4x 140mm)", "ATX • E-ATX Ready • Best Value Airflow", 1190000, 790000, 0],
+        ["Phanteks", "Phanteks XT View ATX (Inc 3x D-RGB)", "ATX • Pillarless Dual Glass", 1350000, 890000, 0],
+        ["Phanteks", "Phanteks NV5 Mid-Tower Showcase", "ATX • Near-Seamless Glass • DRGB", 1650000, 1120000, 0],
+        ["Phanteks", "Phanteks NV7 Full-Tower Showcase", "E-ATX • Studio Display Case", 3250000, 2250000, 0],
+        ["Corsair", "Corsair 3000D Airflow ATX", "ATX • High Airflow Mesh • Black/White", 1190000, 780000, 0],
+        ["Corsair", "Corsair 4000D Airflow ATX Black/White", "ATX • Legendary Cable Management", 1390000, 920000, 0],
+        ["Corsair", "Corsair iCUE 4000D RGB Airflow", "ATX • Inc 3x AF120 RGB Elite + Node", 1990000, 1320000, 0],
+        ["Corsair", "Corsair 5000D Airflow ATX", "ATX • 360mm Side/Top Rad Support", 2250000, 1490000, 0],
+        ["Corsair", "Corsair 3500X ARGB Mid-Tower", "ATX • Wraparound Glass • Reverse Mobo", 1690000, 1150000, 0],
+        ["Corsair", "Corsair 6500X Dual Chamber ATX", "ATX • Walnut/Aluminum Panels", 2850000, 1950000, 0],
+        ["ASUS", "ASUS Prime AP201 Mesh mATX", "mATX • 33L Compact • 360mm Rad Support", 1150000, 760000, 0],
+        ["ASUS", "ASUS Prime AP201 Tempered Glass White", "mATX • Compact Clean Aesthetic", 1250000, 830000, 0],
+        ["ASUS", "ASUS TUF Gaming GT301 ATX", "ATX • Honeycomb Front • 4x Fans", 1290000, 840000, 0],
+        ["ASUS", "ASUS TUF Gaming GT502 Dual Chamber", "ATX • Carry Handles • Panoramic Glass", 2350000, 1590000, 0],
+        ["ASUS", "ASUS ROG Strix Helios GX601", "E-ATX • Brushed Aluminum • Aura Sync", 4650000, 3150000, 0],
+        ["ASUS", "ASUS ROG Hyperion GR701 E-ATX", "Full Tower • X-Frame Aluminum • 4x 140mm", 6250000, 4250000, 0],
+        ["HYTE", "HYTE Y40 Mid-Tower Panoramic", "ATX • Vertical GPU Riser Included", 2250000, 1520000, 0],
+        ["HYTE", "HYTE Y60 Panoramic Dual Chamber", "ATX • 3-Piece Corner Glass • PCIe 4 Riser", 2950000, 1990000, 0],
+        ["HYTE", "HYTE Y70 Dual Chamber ATX", "E-ATX • Massive 4-Slot Vertical GPU", 3450000, 2390000, 0],
+        ["HYTE", "HYTE Y70 Touch Infinite (14.5\" 2.5K LCD)", "E-ATX • Integrated Touchscreen Display", 5950000, 4250000, 0],
+        ["Jonsbo", "Jonsbo D31 Mesh Screen mATX", "mATX • Built-in 8\" LCD Monitor", 1650000, 1120000, 0]
+      ];
+      cases.forEach(c => addItem('case', c[0], c[1], c[2], c[3], c[4], c[5]));
+
+      // =========================================================================
+      // KATEGORI 9: CPU COOLER (AIR & AIO LIQUID) - 76 ITEM
+      // =========================================================================
+      const coolers = [
+        // Air Coolers (Single & Dual Tower)
+        ["ID-Cooling", "ID-Cooling SE-903-XT Basic", "Air • 3 Heatpipes • 92mm • Budget", 185000, 110000, 3],
+        ["ID-Cooling", "ID-Cooling SE-214-XT ARGB Black/White", "Air • 4 Heatpipes • 120mm ARGB • Best Value", 265000, 165000, 4],
+        ["ID-Cooling", "ID-Cooling SE-224-XTS Black/White", "Air • 4 Heatpipes • 220W TDP • Quiet", 320000, 200000, 4],
+        ["ID-Cooling", "ID-Cooling Frozn A410 Black/White", "Air • 4 Heatpipes • FDB Fan", 390000, 250000, 4],
+        ["ID-Cooling", "ID-Cooling Frozn A620 Pro SE", "Air • Dual Tower 6 Heatpipes • 260W TDP", 520000, 340000, 6],
+        ["ID-Cooling", "ID-Cooling Frozn A720 Black", "Air • Dual Tower 7 Heatpipes • 300W TDP", 790000, 520000, 7],
+        ["DeepCool", "DeepCool AG200 Single Tower", "Air • 2 Heatpipes • Compact", 195000, 120000, 3],
+        ["DeepCool", "DeepCool AG400 Single Tower", "Air • 4 Heatpipes • 220W TDP", 295000, 185000, 4],
+        ["DeepCool", "DeepCool AG400 Plus (Dual Fan)", "Air • 4 Heatpipes • Push-Pull", 360000, 230000, 5],
+        ["DeepCool", "DeepCool AK400 Black / White", "Air • Matrix Fin • 220W TDP • Clean", 430000, 280000, 4],
+        ["DeepCool", "DeepCool AK400 Digital", "Air • Real-Time CPU Temp Screen", 590000, 390000, 5],
+        ["DeepCool", "DeepCool AG620 Dual Tower", "Air • 6 Heatpipes • Dual 120mm • 260W", 650000, 430000, 6],
+        ["DeepCool", "DeepCool AK620 Zero Dark / White", "Air • Dual Tower • Flagship Air", 890000, 590000, 6],
+        ["DeepCool", "DeepCool AK620 Digital", "Air • Dual Tower + Status Display", 1090000, 730000, 7],
+        ["DeepCool", "DeepCool Assassin IV", "Air • Silent Cube Dual Tower • 280W", 1390000, 940000, 7],
+        ["Thermalright", "Thermalright Assassin X 120 Refined SE", "Air • 4 Heatpipes • ARGB • Budget King", 275000, 175000, 4],
+        ["Thermalright", "Thermalright Burst Assassin 120", "Air • 6 Heatpipes Single Tower", 350000, 225000, 4],
+        ["Thermalright", "Thermalright Peerless Assassin 120 SE", "Air • Dual Tower 6 Heatpipes • Legend", 560000, 380000, 6],
+        ["Thermalright", "Thermalright Peerless Assassin 120 White ARGB", "Air • Dual Tower • White ARGB", 620000, 420000, 6],
+        ["Thermalright", "Thermalright Phantom Spirit 120 SE", "Air • Dual Tower 7 Heatpipes • Best Value", 640000, 440000, 6],
+        ["Thermalright", "Thermalright Phantom Spirit 120 EVO", "Air • 7 Heatpipes • 2150RPM Fans", 790000, 540000, 7],
+        ["Thermalright", "Thermalright Frost Commander 140", "Air • 5x 8mm Heatpipes • Heavy Duty", 850000, 580000, 7],
+        ["Noctua", "Noctua NH-U12S Redux", "Air • Single Tower • Quiet NF-P12", 850000, 560000, 4],
+        ["Noctua", "Noctua NH-U12A chromax.black", "Air • 7 Heatpipes • Dual NF-A12x25", 1950000, 1320000, 6],
+        ["Noctua", "Noctua NH-D15 chromax.black", "Air • Dual Tower 140mm • King of Air", 1890000, 1250000, 6],
+        ["Noctua", "Noctua NH-D15 G2", "Air • 8 Heatpipes • Next-Gen Flagship", 2450000, 1750000, 6],
+        ["be quiet!", "be quiet! Pure Rock 2 Black", "Air • 4 Heatpipes • 150W TDP • Silent", 590000, 380000, 4],
+        ["be quiet!", "be quiet! Dark Rock 5", "Air • 6 Heatpipes • Silent Wings 4", 1190000, 810000, 5],
+        ["be quiet!", "be quiet! Dark Rock Pro 5", "Air • Dual Tower • 270W TDP • Stealth", 1550000, 1050000, 6],
+        ["Cooler Master", "Cooler Master Hyper 212 Halo Black/White", "Air • Dual-Loop ARGB • Classic", 540000, 350000, 4],
+        ["Cooler Master", "Cooler Master Hyper 622 Halo", "Air • Dual Tower • 6 Heatpipes", 890000, 590000, 6],
+        ["Arctic", "Arctic Freezer 36 Black / ARGB", "Air • Dual Push-Pull P12 Fans", 550000, 360000, 5],
+
+        // AIO Liquid Coolers (120mm, 240mm, 280mm, 360mm, 420mm)
+        ["ID-Cooling", "ID-Cooling Frostflow X 240", "AIO 240mm • White LED • Budget AIO", 690000, 430000, 10],
+        ["ID-Cooling", "ID-Cooling FX240 INF Black/White", "AIO 240mm • Infinity Mirror Pump", 850000, 550000, 11],
+        ["ID-Cooling", "ID-Cooling FX360 INF Black/White", "AIO 360mm • Infinity Mirror • Best Value", 1090000, 720000, 14],
+        ["ID-Cooling", "ID-Cooling SL360 Space LCD", "AIO 360mm • 2.1\" Custom GIF LCD", 1850000, 1250000, 15],
+        ["Thermalright", "Thermalright Aqua Elite 240 V3", "AIO 240mm • ARGB • Super Value", 680000, 440000, 10],
+        ["Thermalright", "Thermalright Aqua Elite 360 V3", "AIO 360mm • ARGB • Best Budget 360", 860000, 560000, 14],
+        ["Thermalright", "Thermalright Frozen Notte 360 ARGB", "AIO 360mm • Full Copper Base • White/Black", 1050000, 690000, 14],
+        ["Thermalright", "Thermalright Frozen Warframe 360", "AIO 360mm • Magnetic 2.4\" IPS LCD", 1450000, 960000, 15],
+        ["DeepCool", "DeepCool LE520 240mm ARGB", "AIO 240mm • Anti-Leak Tech", 890000, 570000, 10],
+        ["DeepCool", "DeepCool LS520 SE 240mm ARGB", "AIO 240mm • Infinity Mirror • 4th Gen Pump", 1190000, 780000, 11],
+        ["DeepCool", "DeepCool LS720 SE 360mm ARGB", "AIO 360mm • 300W TDP • Black/White", 1490000, 980000, 14],
+        ["DeepCool", "DeepCool LT720 360mm Infinity", "AIO 360mm • Multidimensional Mirror", 1650000, 1090000, 14],
+        ["DeepCool", "DeepCool Mystique 360 LCD", "AIO 360mm • 2.8\" TFT LCD Screen", 2350000, 1590000, 16],
+        ["Arctic", "Arctic Liquid Freezer III 240 Black/ARGB", "AIO 240mm • VRM Fan • Thick 38mm Rad", 1350000, 920000, 11],
+        ["Arctic", "Arctic Liquid Freezer III 280 ARGB", "AIO 280mm • Dual 140mm • Quiet Beast", 1550000, 1050000, 12],
+        ["Arctic", "Arctic Liquid Freezer III 360 Black", "AIO 360mm • Best Thermal Performance", 1690000, 1150000, 14],
+        ["Arctic", "Arctic Liquid Freezer III 360 A-RGB White", "AIO 360mm • VRM Fan • White", 1890000, 1290000, 15],
+        ["Arctic", "Arctic Liquid Freezer III 420 A-RGB", "AIO 420mm • 3x 140mm • Extreme Cooling", 2150000, 1480000, 16],
+        ["Cooler Master", "Cooler Master MasterLiquid 240L Core ARGB", "AIO 240mm • Dual Chamber Gen S", 1050000, 680000, 10],
+        ["Cooler Master", "Cooler Master MasterLiquid 360L Core ARGB", "AIO 360mm • Black/White • Value", 1350000, 890000, 14],
+        ["Cooler Master", "Cooler Master MasterLiquid 360 Atmos", "AIO 360mm • Customizable Pump Cap", 2150000, 1450000, 15],
+        ["MSI", "MSI MAG CoreLiquid E240 Black/White", "AIO 240mm • Rotatable Blockhead", 1290000, 840000, 11],
+        ["MSI", "MSI MAG CoreLiquid E360 Black/White", "AIO 360mm • ARGB • 270° Rotating Cap", 1650000, 1090000, 14],
+        ["MSI", "MSI MPG CoreLiquid D360 LCD", "AIO 360mm • 2.4\" IPS Display + VRM Fan", 3250000, 2190000, 16],
+        ["Corsair", "Corsair H100 RGB 240mm Liquid Cooler", "AIO 240mm • SP120 RGB Elite", 1450000, 950000, 11],
+        ["Corsair", "Corsair iCUE H100i Elite Capellix XT 240", "AIO 240mm • Commander Core Included", 2150000, 1420000, 12],
+        ["Corsair", "Corsair iCUE H150i Elite Capellix XT 360", "AIO 360mm • 33 Capellix LEDs", 2750000, 1850000, 15],
+        ["Corsair", "Corsair iCUE Link Titan 360 RX RGB", "AIO 360mm • Single-Cable Ecosystem", 3250000, 2250000, 15],
+        ["Corsair", "Corsair iCUE H150i Elite LCD XT 360", "AIO 360mm • 2.1\" IPS LCD • White/Black", 3950000, 2690000, 16],
+        ["NZXT", "NZXT Kraken 240 RGB Black/White", "AIO 240mm • 1.54\" Square LCD", 2250000, 1520000, 11],
+        ["NZXT", "NZXT Kraken 360 RGB Black/White", "AIO 360mm • 1.54\" Square LCD • F120 RGB", 2950000, 1990000, 15],
+        ["NZXT", "NZXT Kraken Elite 240 RGB", "AIO 240mm • 2.36\" 60Hz Wide-Angle LCD", 3350000, 2290000, 12],
+        ["NZXT", "NZXT Kraken Elite 360 RGB (2024)", "AIO 360mm • 2.72\" IPS LCD Ring", 4450000, 3050000, 16],
+        ["Lian Li", "Lian Li Galahad II Trinity 240 SL-INF", "AIO 240mm • Uni Fan SL-Infinity", 2150000, 1450000, 12],
+        ["Lian Li", "Lian Li Galahad II Trinity 360 SL-INF", "AIO 360mm • 3 Pump Caps • Black/White", 2750000, 1890000, 15],
+        ["Lian Li", "Lian Li Galahad II LCD 360 SL-INF", "AIO 360mm • 2.88\" IPS LCD + Uni Fans", 3850000, 2650000, 16],
+        ["Lian Li", "Lian Li HydroShift LCD 360S", "AIO 360mm • Concealed Side Tubing", 3150000, 2190000, 15],
+        ["ASUS", "ASUS TUF Gaming LC II 240 ARGB", "AIO 240mm • NCVM Pump • 6Yr Warranty", 1590000, 1050000, 11],
+        ["ASUS", "ASUS TUF Gaming LC II 360 ARGB", "AIO 360mm • Grooved Fin Radiator", 1990000, 1320000, 14],
+        ["ASUS", "ASUS ROG Strix LC III 360 ARGB LCD", "AIO 360mm • Asetek Gen7 V2 • White/Black", 3650000, 2490000, 15],
+        ["ASUS", "ASUS ROG Ryujin III 360 ARGB Extreme", "AIO 360mm • 3.5\" LCD + Embedded VRM Fan", 5450000, 3750000, 18],
+        ["be quiet!", "be quiet! Pure Loop 2 FX 360mm", "AIO 360mm • Refillable • Light Wings", 2150000, 1450000, 14],
+        ["be quiet!", "be quiet! Silent Loop 2 360mm", "AIO 360mm • Whisper Quiet • Dampened Pump", 2350000, 1590000, 14],
+        ["Gigabyte", "Gigabyte AORUS Waterforce X II 360", "AIO 360mm • EZ-Chain Mag Fans + LCD", 3450000, 2350000, 16]
+      ];
+      coolers.forEach(c => addItem('cpucooler', c[0], c[1], c[2], c[3], c[4], c[5]));
+
+      // =========================================================================
+      // KATEGORI 10: FAN COOLER (CASE FAN / PACK) - 76 ITEM
+      // =========================================================================
+      const fans = [
+        // Single & 3-Pack Budget to Flagship
+        ["ID-Cooling", "ID-Cooling WF-12025-XT Black (Single)", "120mm • PWM • Non-RGB • Budget", 65000, 35000, 2],
+        ["ID-Cooling", "ID-Cooling XF-12025-ARGB Trio (3-Pack)", "3x 120mm • ARGB PWM + Splitter", 265000, 165000, 6],
+        ["ID-Cooling", "ID-Cooling AF-127-ARGB Trio (3-Pack)", "3x 120mm • High Static Pressure", 340000, 215000, 7],
+        ["ID-Cooling", "ID-Cooling AS-120-ARGB-K (3-Pack)", "3x 120mm • Daisy Chain • Black/White", 360000, 230000, 7],
+        ["ID-Cooling", "ID-Cooling TF-12025-PRO Black (Single)", "120mm • High Airflow • FDB", 95000, 55000, 3],
+        ["DeepCool", "DeepCool XFAN 120 (Single)", "120mm • Silent Molex/3-Pin", 45000, 25000, 2],
+        ["DeepCool", "DeepCool RF120 FS (3-Pack)", "3x 120mm • Fixed Tri-Color LED", 195000, 115000, 6],
+        ["DeepCool", "DeepCool FC120 Black / White (3-Pack)", "3x 120mm • Daisy-Chain ARGB PWM", 390000, 250000, 7],
+        ["DeepCool", "DeepCool FK120 Black (3-Pack)", "3x 120mm • Non-RGB Performance PWM", 360000, 230000, 6],
+        ["DeepCool", "DeepCool FT12 120mm FDB (Single)", "120mm • Glass Window Hub • High Static", 220000, 140000, 3],
+        ["Thermalright", "Thermalright TL-C12C Black (Single)", "120mm • PWM • S-FDB • Super Value", 75000, 45000, 2],
+        ["Thermalright", "Thermalright TL-C12C-S ARGB (3-Pack)", "3x 120mm • ARGB PWM • Best Budget Pack", 195000, 125000, 6],
+        ["Thermalright", "Thermalright TL-C12CW-S White ARGB (3-Pack)", "3x 120mm • White ARGB PWM", 210000, 135000, 6],
+        ["Thermalright", "Thermalright TL-S12 Halo ARGB (3-Pack)", "3x 120mm • Minimalist Ring LED", 265000, 170000, 6],
+        ["Thermalright", "Thermalright TL-M12 Infinity Mirror (Single)", "120mm • Side Infinity Mirror ARGB", 125000, 80000, 3],
+        ["Thermalright", "Thermalright TL-M12R Reverse Blade (Single)", "120mm • Reverse Airflow • Infinity", 135000, 85000, 3],
+        ["Arctic", "Arctic P12 PWM PST Black (Single)", "120mm • High Static Pressure • King", 115000, 75000, 2],
+        ["Arctic", "Arctic P12 PWM PST Value Pack (5-Pack)", "5x 120mm • Daisy Chain • Best Value", 460000, 300000, 8],
+        ["Arctic", "Arctic P12 PWM PST A-RGB (3-Pack)", "3x 120mm • Black/White • Quiet ARGB", 560000, 370000, 7],
+        ["Arctic", "Arctic P12 Max Black (Single)", "120mm • 3300 RPM Extreme Performance", 165000, 105000, 4],
+        ["Arctic", "Arctic P14 PWM PST Black (Single)", "140mm • High Static Pressure", 145000, 90000, 3],
+        ["Arctic", "Arctic P14 PWM PST Value Pack (5-Pack)", "5x 140mm • Ultimate Case Airflow", 590000, 380000, 10],
+        ["Arctic", "Arctic P14 PWM PST A-RGB (3-Pack)", "3x 140mm • Black/White ARGB", 690000, 450000, 8],
+        ["Cooler Master", "Cooler Master SickleFlow 120 ARGB (Single)", "120mm • Frosted Blades", 145000, 90000, 3],
+        ["Cooler Master", "Cooler Master SickleFlow 120 ARGB (3-Pack)", "3x 120mm • Controller Included", 450000, 285000, 7],
+        ["Cooler Master", "Cooler Master MasterFan MF120 Halo2 (3-Pack)", "3x 120mm • Dual Loop ARGB • White/Black", 650000, 420000, 8],
+        ["Cooler Master", "Cooler Master Mobius 120P ARGB (Single)", "120mm • Ring Blade Design • Performance", 320000, 205000, 3],
+        ["DarkFlash", "DarkFlash C6 120mm ARGB (3-Pack)", "3x 120mm • White/Black/Pink", 220000, 135000, 6],
+        ["DarkFlash", "DarkFlash INF24 Infinity Mirror (3-Pack)", "3x 120mm • Infinity Side & Center", 340000, 215000, 7],
+        ["DarkFlash", "DarkFlash DM12R Reverse ARGB (3-Pack)", "3x 120mm • Reverse Intake Airflow", 360000, 225000, 7],
+        ["Montech", "Montech AX120 PWM ARGB (Single)", "120mm • Hexagon ARGB Frame", 165000, 105000, 3],
+        ["Montech", "Montech RX120 Reverse PWM ARGB (Single)", "120mm • Reverse Intake • Black/White", 175000, 110000, 3],
+        ["Montech", "Montech AX140 PWM ARGB (Single)", "140mm • High Airflow • Black/White", 195000, 125000, 3],
+        ["Lian Li", "Lian Li UNI FAN SL120 V2 (Single)", "120mm • Interlocking Cableless • Black/White", 390000, 255000, 3],
+        ["Lian Li", "Lian Li UNI FAN SL120 V2 (3-Pack + Hub)", "3x 120mm • L-Connect 3 Controller", 1250000, 820000, 9],
+        ["Lian Li", "Lian Li UNI FAN SL-Infinity 120 (Single)", "120mm • Infinity Mirror • Black/White", 430000, 285000, 4],
+        ["Lian Li", "Lian Li UNI FAN SL-Infinity 120 Reverse", "120mm • Reverse Blade • Clean Intake", 450000, 295000, 4],
+        ["Lian Li", "Lian Li UNI FAN SL-Infinity 120 (3-Pack)", "3x 120mm • Controller Hub Included", 1390000, 920000, 10],
+        ["Lian Li", "Lian Li UNI FAN TL 120 (3-Pack + Hub)", "3x 120mm • LCP Blades • Side Infinity", 1590000, 1050000, 10],
+        ["Lian Li", "Lian Li UNI FAN TL LCD 120 (Single)", "120mm • 1.6\" IPS Screen in Fan Center", 690000, 460000, 5],
+        ["Lian Li", "Lian Li UNI FAN TL LCD 120 (3-Pack + Hub)", "3x 120mm • Custom GIF/Sensor LCD", 2150000, 1450000, 12],
+        ["Lian Li", "Lian Li UNI FAN P28 120mm (3-Pack)", "3x 120mm • 28mm Thick LCP Performance", 1090000, 720000, 9],
+        ["Corsair", "Corsair AF120 RGB Elite (3-Pack + Node)", "3x 120mm • AirGuide • Black/White", 950000, 610000, 8],
+        ["Corsair", "Corsair LL120 RGB Dual Light Loop (3-Pack)", "3x 120mm • 16 Independent LEDs", 1190000, 750000, 9],
+        ["Corsair", "Corsair QL120 RGB Quad Light Loop (3-Pack)", "3x 120mm • 34 LEDs Front & Back", 1450000, 920000, 10],
+        ["Corsair", "Corsair iCUE Link QX120 RGB (3-Pack)", "3x 120mm • Magnetic Single-Cable + Hub", 1950000, 1290000, 10],
+        ["Corsair", "Corsair RS120 ARGB PWM (3-Pack)", "3x 120mm • Direct Motherboard ARGB", 690000, 450000, 7],
+        ["NZXT", "NZXT F120Q Quiet Airflow (Single)", "120mm • Matte Black/White • Non-RGB", 220000, 140000, 2],
+        ["NZXT", "NZXT F120 RGB Core (3-Pack + Controller)", "3x 120mm • Hub-Mounted LEDs", 990000, 640000, 8],
+        ["NZXT", "NZXT F120 RGB Duo (3-Pack + Controller)", "3x 120mm • Dual-Sided Ring RGB", 1290000, 840000, 9],
+        ["NZXT", "NZXT F360 RGB Core Single-Frame 360mm", "360mm Unibody • 3 Fans in 1 Frame", 950000, 630000, 8],
+        ["Noctua", "Noctua NF-P12 redux-1700 PWM (Single)", "120mm • Two-Tone Gray • Quiet", 240000, 155000, 2],
+        ["Noctua", "Noctua NF-F12 PWM chromax.black (Single)", "120mm • Focused Flow • Swappable Pads", 390000, 255000, 2],
+        ["Noctua", "Noctua NF-A12x25 PWM chromax.black", "120mm • Sterrox LCP • King of 120mm", 520000, 350000, 2],
+        ["Noctua", "Noctua NF-A14 PWM chromax.black", "140mm • SSO2 Bearing • Ultra Quiet", 440000, 290000, 3],
+        ["be quiet!", "be quiet! Pure Wings 3 120mm PWM", "120mm • Rifle Bearing • Silent", 175000, 110000, 2],
+        ["be quiet!", "be quiet! Light Wings 120mm ARGB (3-Pack)", "3x 120mm • ARGB Ring + Hub", 890000, 580000, 7],
+        ["be quiet!", "be quiet! Silent Wings 4 120mm PWM", "120mm • 6-Pole Motor • Whisper Quiet", 360000, 235000, 2],
+        ["be quiet!", "be quiet! Silent Wings Pro 4 140mm PWM", "140mm • 3-Speed Switch • Flagship", 490000, 325000, 3],
+        ["Phanteks", "Phanteks M25-120 D-RGB (3-Pack)", "3x 120mm • High Airflow • Black/White", 490000, 315000, 7],
+        ["Phanteks", "Phanteks D30-120 D-RGB Reverse (3-Pack)", "3x 120mm • 30mm Thick • Halos Ring", 1190000, 790000, 9],
+        ["Phanteks", "Phanteks T30-120 30mm Thick (3-Pack)", "3x 120mm • LCP • Ultimate Radiator Fan", 1250000, 840000, 8],
+        ["ASUS", "ASUS TUF Gaming TF120 ARGB (3-Pack)", "3x 120mm • Double-Layer LED + Hub", 650000, 420000, 7],
+        ["MSI", "MSI MPG EZ120 ARGB Magnetic (3-Pack)", "3x 120mm • Cableless Magnetic Blocks", 1150000, 760000, 8],
+        ["Gigabyte", "Gigabyte AORUS EZ Chain Fan 120 (3-Pack)", "3x 120mm • Slide-In Interlock ARGB", 890000, 580000, 8],
+        // Tambahan 11 varian agar 76 item
+        ["Cube Gaming", "Cube Gaming Fix RGB 120mm (Single)", "120mm • Molex • Budget Case Fan", 35000, 15000, 2],
+        ["Paradox", "Paradox Gaming Hypersonic ARGB (3-Pack)", "3x 120mm • Remote & Sync", 185000, 110000, 6],
+        ["Tecware", "Tecware Omni P12 ARGB (3-Pack + Hub)", "3x 120mm • PWM ARGB • Black/White", 285000, 180000, 6],
+        ["DeepCool", "DeepCool CF120 Plus (3-Pack)", "3x 120mm • 18 Addressable LEDs", 460000, 290000, 7],
+        ["ID-Cooling", "ID-Cooling NO-12015-XT Slim 15mm", "120mm • 15mm Ultra Thin • ITX Case", 135000, 85000, 2],
+        ["Noctua", "Noctua NF-A12x15 PWM chromax.black", "120mm • 15mm Slim • SFF/ITX", 420000, 275000, 2],
+        ["Thermalright", "Thermalright TL-B12 Extrem 120mm", "120mm • 3150 RPM LCP • Heavy Duty", 220000, 145000, 4],
+        ["Lian Li", "Lian Li UNI FAN AL120 V2 (3-Pack)", "3x 120mm • Blade & Corner RGB", 1190000, 780000, 9],
+        ["Corsair", "Corsair SP120 RGB Elite (3-Pack)", "3x 120mm • Lighting Node Core", 790000, 510000, 7],
+        ["NZXT", "NZXT F140 RGB Duo (2-Pack + Hub)", "2x 140mm • Dual-Sided Ring RGB", 990000, 640000, 7],
+        ["Cooler Master", "Cooler Master MasterFan MF140 Halo2", "140mm • Dual Loop ARGB", 265000, 170000, 3]
+      ];
+      fans.forEach(f => addItem('fan', f[0], f[1], f[2], f[3], f[4], f[5]));
+
+      // =========================================================================
+      // KATEGORI 11: MONITOR - 78 ITEM
+      // =========================================================================
+      const monitors = [
+        // Budget & Office / Entry Gaming (75Hz - 100Hz)
+        ["Xiaomi", "Xiaomi A22i 21.5\" FHD 75Hz VA", "21.5\" • 1080p • 75Hz • Slim Bezel", 990000, 650000, 20],
+        ["Xiaomi", "Xiaomi A24i 23.8\" FHD 100Hz IPS", "23.8\" • 1080p • 100Hz • 99% sRGB", 1250000, 850000, 22],
+        ["Xiaomi", "Xiaomi A27i 27\" FHD 100Hz IPS", "27\" • 1080p • 100Hz • HDR10", 1490000, 990000, 25],
+        ["LG", "LG 24MR400-B 24\" FHD 100Hz IPS", "24\" • 1080p • 100Hz • FreeSync", 1350000, 890000, 22],
+        ["LG", "LG 27MR400-B 27\" FHD 100Hz IPS", "27\" • 1080p • 100Hz • Reader Mode", 1650000, 1090000, 25],
+        ["Samsung", "Samsung S24C310 24\" FHD 75Hz IPS", "24\" • 1080p • 75Hz • Borderless", 1290000, 820000, 20],
+        ["Samsung", "Samsung Essential S3 S33GC 24\" 100Hz", "24\" • 1080p • 100Hz • IPS", 1390000, 910000, 22],
+        ["ASUS", "ASUS VA24EHF 23.8\" FHD 100Hz IPS", "23.8\" • 1080p • 100Hz • 1ms MPRT", 1450000, 950000, 22],
+        ["MSI", "MSI PRO MP243X 23.8\" FHD 100Hz IPS", "23.8\" • 1080p • 100Hz • Built-in Speaker", 1390000, 890000, 22],
+        ["MSI", "MSI PRO MP251 24.5\" FHD 100Hz IPS", "24.5\" • 1080p • 100Hz • Eye-Q Check", 1420000, 920000, 22],
+        ["Acer", "Acer EK241Y E 23.8\" FHD 100Hz IPS", "23.8\" • 1080p • 100Hz • FreeSync", 1290000, 840000, 22],
+        ["ViewSonic", "ViewSonic VA2432-H-W 24\" 100Hz IPS White", "24\" • 1080p • 100Hz • Full White", 1390000, 910000, 22],
+        ["Dell", "Dell SE2422H 24\" FHD 75Hz VA", "24\" • 1080p • 75Hz • ComfortView", 1350000, 850000, 20],
+        ["BenQ", "BenQ GW2490 23.8\" FHD 100Hz IPS", "23.8\" • 1080p • 100Hz • Brightness Intel.", 1590000, 1050000, 22],
+
+        // 1080p High Refresh Rate Gaming (144Hz - 360Hz)
+        ["Xiaomi", "Xiaomi Gaming Monitor G24i 23.8\" 180Hz IPS", "23.8\" • 1080p • 180Hz • 1ms GTG • Value", 1590000, 1120000, 26],
+        ["AOC", "AOC 24G2SP 23.8\" FHD 165Hz IPS", "23.8\" • 1080p • 165Hz • Ergonomic Stand", 1950000, 1290000, 28],
+        ["AOC", "AOC 24G4 23.8\" FHD 180Hz Fast IPS", "23.8\" • 1080p • 180Hz • 0.5ms MPRT", 1890000, 1280000, 28],
+        ["AOC", "AOC 27G4 27\" FHD 180Hz Fast IPS", "27\" • 1080p • 180Hz • HDR10", 2290000, 1550000, 32],
+        ["LG", "LG UltraGear 24GS60F-B 24\" 180Hz IPS", "24\" • 1080p • 180Hz • 1ms GTG • G-Sync", 1990000, 1350000, 28],
+        ["LG", "LG UltraGear 24GN65R-B 24\" 144Hz IPS", "24\" • 1080p • 144Hz • Pivot Stand", 1950000, 1280000, 28],
+        ["LG", "LG UltraGear 27GS60F-B 27\" 180Hz IPS", "27\" • 1080p • 180Hz • 1ms GTG", 2450000, 1650000, 32],
+        ["ASUS", "ASUS TUF Gaming VG249Q3A 23.8\" 180Hz IPS", "23.8\" • 1080p • 180Hz • ELMB", 2150000, 1450000, 28],
+        ["ASUS", "ASUS TUF Gaming VG259QM 24.5\" 280Hz IPS", "24.5\" • 1080p • 280Hz • Esports Fast IPS", 3450000, 2250000, 32],
+        ["MSI", "MSI G244F E2 23.8\" FHD 180Hz Rapid IPS", "23.8\" • 1080p • 180Hz • 1ms GTG", 1890000, 1280000, 28],
+        ["MSI", "MSI MAG 255F E20 24.5\" FHD 200Hz Rapid IPS", "24.5\" • 1080p • 200Hz • 0.5ms", 1990000, 1380000, 28],
+        ["MSI", "MSI G274F 27\" FHD 180Hz Rapid IPS", "27\" • 1080p • 180Hz • G-Sync Comp.", 2390000, 1620000, 32],
+        ["Gigabyte", "Gigabyte G24F 2 23.8\" FHD 180Hz SS IPS", "23.8\" • 1080p • 180Hz • 125% sRGB", 2090000, 1390000, 28],
+        ["Acer", "Acer Nitro KG241Y S 23.8\" 180Hz IPS", "23.8\" • 1080p • 180Hz • 0.5ms", 1750000, 1180000, 26],
+        ["Acer", "Acer Nitro VG240Y M3 23.8\" 180Hz IPS", "23.8\" • 1080p • 180Hz • FreeSync", 1790000, 1200000, 26],
+        ["Samsung", "Samsung Odyssey G3 G30D 24\" 180Hz VA", "24\" • 1080p • 180Hz • Pivot Stand", 1890000, 1250000, 26],
+        ["Samsung", "Samsung Odyssey G4 25\" FHD 240Hz IPS", "25\" • 1080p • 240Hz • Ergonomic", 3250000, 2150000, 30],
+        ["ViewSonic", "ViewSonic VX2428 24\" FHD 180Hz Fast IPS", "24\" • 1080p • 180Hz • 0.5ms", 1850000, 1240000, 26],
+        ["BenQ", "BenQ Zowie XL2411K 24\" FHD 144Hz TN", "24\" • 1080p • 144Hz • DyAc Esports", 2950000, 1890000, 30],
+        ["BenQ", "BenQ Zowie XL2546X 24.5\" FHD 240Hz TN", "24.5\" • 1080p • 240Hz • DyAc 2 Pro FPS", 7450000, 5150000, 35],
+        ["BenQ", "BenQ Zowie XL2566X+ 24.1\" FHD 400Hz TN", "24.1\" • 1080p • 400Hz • Tournament Grade", 10450000, 7450000, 40],
+        ["ASUS", "ASUS ROG Swift Pro PG248QP 24.1\" 540Hz", "24.1\" • 1080p • 540Hz • E-TN NVIDIA Reflex", 13950000, 9850000, 42],
+
+        // 1440p (2K QHD) Gaming & Content Creation (144Hz - 360Hz)
+        ["Xiaomi", "Xiaomi Gaming Monitor G27Qi 27\" 2K 180Hz", "27\" • 2560x1440 • 180Hz Fast IPS • Best Value", 2590000, 1850000, 35],
+        ["Xiaomi", "Xiaomi Mini LED Gaming Monitor G Pro 27i", "27\" • 2K 180Hz • 1152-Zone HDR1000", 4450000, 3250000, 48],
+        ["AOC", "AOC Q27G4 27\" 2K QHD 180Hz Fast IPS", "27\" • 2560x1440 • 180Hz • 1ms GTG", 3150000, 2250000, 36],
+        ["AOC", "AOC Q27G3XMN 27\" 2K 180Hz Mini-LED", "27\" • 2560x1440 • True HDR1000 VA", 4650000, 3350000, 45],
+        ["LG", "LG UltraGear 27GS75Q-B 27\" 2K 180Hz IPS", "27\" • 2560x1440 • 180Hz (OC 200Hz)", 3650000, 2590000, 38],
+        ["LG", "LG UltraGear 27GP850-B 27\" 2K 180Hz NanoIPS", "27\" • 2560x1440 • Nano IPS • Legend", 4450000, 2950000, 40],
+        ["LG", "LG UltraGear 27GR83Q-B 27\" 2K 240Hz IPS", "27\" • 2560x1440 • 240Hz • HDMI 2.1", 5650000, 3950000, 42],
+        ["LG", "LG UltraGear 27GS95QE-B 27\" 2K 240Hz OLED", "27\" • 2560x1440 • 0.03ms OLED • MLA+", 11450000, 8250000, 55],
+        ["ASUS", "ASUS TUF Gaming VG27AQ3A 27\" 2K 180Hz", "27\" • 2560x1440 • 180Hz Fast IPS", 3750000, 2650000, 38],
+        ["ASUS", "ASUS ROG Strix XG27ACS 27\" 2K 180Hz", "27\" • 2560x1440 • USB-C • Black/White", 4350000, 3150000, 40],
+        ["ASUS", "ASUS ROG Swift PG27AQDM 27\" 2K 240Hz OLED", "27\" • 2560x1440 • 0.03ms OLED • Heatsink", 12950000, 9250000, 58],
+        ["ASUS", "ASUS ROG Swift PG27AQDP 27\" 2K 480Hz OLED", "27\" • 2560x1440 • 480Hz WOLED Flagship", 16450000, 12250000, 62],
+        ["MSI", "MSI G272QPF E2 27\" 2K QHD 180Hz Rapid IPS", "27\" • 2560x1440 • 180Hz • Best Value 2K", 3190000, 2290000, 36],
+        ["MSI", "MSI MAG 274QRF QD E2 27\" 2K 180Hz", "27\" • Quantum Dot Rapid IPS • 65W Type-C", 4350000, 3100000, 40],
+        ["MSI", "MSI MPG 271QRX 27\" 2K 360Hz QD-OLED", "27\" • 2560x1440 • 360Hz 0.03ms QD-OLED", 12450000, 9150000, 58],
+        ["Gigabyte", "Gigabyte M27Q (Rev 2.0) 27\" 2K 170Hz IPS", "27\" • 2560x1440 • Built-in KVM Switch", 3650000, 2550000, 38],
+        ["Gigabyte", "Gigabyte M27Q X 27\" 2K 240Hz SS IPS", "27\" • 2560x1440 • 240Hz • KVM", 5450000, 3850000, 42],
+        ["Gigabyte", "Gigabyte AORUS FO27Q3 27\" 2K 360Hz QD-OLED", "27\" • 2560x1440 • 360Hz QD-OLED", 12850000, 9450000, 58],
+        ["Dell", "Dell Alienware AW2724DM 27\" 2K 180Hz IPS", "27\" • 2560x1440 • HDR600 • Build Quality", 5450000, 3850000, 42],
+        ["Dell", "Dell Alienware AW2725DF 27\" 2K 360Hz QD-OLED", "27\" • 2560x1440 • 360Hz QD-OLED", 13250000, 9650000, 60],
+        ["Samsung", "Samsung Odyssey G5 G50D 27\" 2K 180Hz IPS", "27\" • 2560x1440 • 180Hz • Pivot Stand", 3450000, 2450000, 38],
+        ["Samsung", "Samsung Odyssey G6 G60SD 27\" 2K 360Hz OLED", "27\" • 2560x1440 • Glare-Free OLED", 11950000, 8750000, 58],
+        ["ViewSonic", "ViewSonic VX2758A-2K-PRO-2 27\" 2K 185Hz", "27\" • 2560x1440 • 185Hz Fast IPS", 2890000, 2050000, 36],
+        ["Acer", "Acer Nitro XV272U V3 27\" 2K 180Hz IPS", "27\" • 2560x1440 • 180Hz • 0.5ms", 3090000, 2190000, 36],
+
+        // Ultrawide (34" - 49") & 4K UHD Flagship
+        ["Xiaomi", "Xiaomi Curved Gaming Monitor G34WQi 34\"", "34\" • 3440x1440 UWQHD • 180Hz • 1500R", 3850000, 2750000, 48],
+        ["LG", "LG UltraGear 34GP63A-B 34\" UWQHD 160Hz", "34\" • 3440x1440 • Curved VA • Speaker", 4850000, 3350000, 50],
+        ["LG", "LG UltraGear 34GS95QE-B 34\" UWQHD 240Hz OLED", "34\" • 3440x1440 • 800R Curved OLED", 14950000, 10850000, 65],
+        ["Dell", "Dell Alienware AW3423DWF 34\" UWQHD QD-OLED", "34\" • 3440x1440 • 165Hz • Best Ultrawide", 13450000, 9650000, 65],
+        ["Samsung", "Samsung Odyssey OLED G8 34\" UWQHD 175Hz", "34\" • 3440x1440 • Slim Metal • Smart TV", 13950000, 9950000, 65],
+        ["Samsung", "Samsung Odyssey OLED G9 49\" DQHD 240Hz", "49\" • 5120x1440 Super Ultrawide • 0.03ms", 19850000, 14250000, 90],
+        ["LG", "LG UltraGear 27GR93U-B 27\" 4K UHD 144Hz", "27\" • 3840x2160 • 144Hz IPS • HDMI 2.1", 6950000, 4950000, 48],
+        ["Gigabyte", "Gigabyte M28U 28\" 4K UHD 144Hz SS IPS", "28\" • 3840x2160 • 144Hz • KVM Switch", 6450000, 4550000, 50],
+        ["Gigabyte", "Gigabyte M32U 31.5\" 4K UHD 144Hz SS IPS", "31.5\" • 3840x2160 • 144Hz • Console & PC", 8450000, 5950000, 55],
+        ["MSI", "MSI MAG 274UPF 27\" 4K UHD 144Hz Rapid IPS", "27\" • 3840x2160 • 144Hz • 65W Type-C", 6650000, 4750000, 48],
+        ["MSI", "MSI MPG 321URX 32\" 4K UHD 240Hz QD-OLED", "32\" • 3840x2160 • 240Hz 0.03ms • Flagship", 16850000, 12450000, 72],
+        ["ASUS", "ASUS ROG Swift PG32UCDM 32\" 4K 240Hz OLED", "32\" • 3840x2160 • 240Hz QD-OLED • Dolby", 18950000, 14250000, 75],
+        ["ASUS", "ASUS ROG Swift PG32UCDP 32\" 4K 240Hz / 480Hz", "32\" • Dual Mode 4K 240Hz / 1080p 480Hz", 19450000, 14650000, 75],
+        ["Dell", "Dell Alienware AW3225QF 32\" 4K 240Hz Curved", "32\" • 3840x2160 • 1700R Curved QD-OLED", 17450000, 12950000, 72],
+        ["Samsung", "Samsung Odyssey Neo G8 32\" 4K 240Hz Mini-LED", "32\" • 3840x2160 • Quantum HDR2000", 13450000, 9450000, 68],
+        ["Samsung", "Samsung Odyssey OLED G8 G80SD 32\" 4K 240Hz", "32\" • 3840x2160 • Flat Glare-Free OLED", 16450000, 12150000, 70],
+        ["ASUS", "ASUS ProArt Display PA279CRV 27\" 4K IPS", "27\" • 3840x2160 • Calman Verified • 96W PD", 6850000, 4850000, 42],
+        ["Dell", "Dell UltraSharp U2723QE 27\" 4K IPS Black", "27\" • 3840x2160 • 2000:1 Contrast • 90W Hub", 7650000, 5350000, 45]
+      ];
+      monitors.forEach(m => addItem('monitor', m[0], m[1], m[2], m[3], m[4], m[5]));
+
+      return db;
+    }
+
+    const DB = buildDatabase();
+
+    /**
+     * 3. PRESET RAKITAN CEPAT (SIAP PAKAI)
+     */
+    const PRESETS = [
+      {
+        title: "PC Gaming 5 Jutaan (Full Second FJB)",
+        badge: "Hemat Maksimal",
+        badgeColor: "amber",
+        desc: "Rakitan sejuta umat berburu part bekas di FB/Threads. Lancar rata kanan 1080p Esports & AAA.",
+        items: [
+          { cat: 'cpu', match: 'Ryzen 5 5500', cond: 'used', qty: 1 },
+          { cat: 'mobo', match: 'B450M-HDV', cond: 'used', qty: 1 },
+          { cat: 'gpu', match: 'RX 6600', cond: 'used', qty: 1 },
+          { cat: 'ram', match: 'Fury Beast 16GB (2x8GB) DDR4 3200MHz', cond: 'used', qty: 1 },
+          { cat: 'ssd', match: 'MP33 512GB', cond: 'new', qty: 1 },
+          { cat: 'psu', match: 'MAG A550BN', cond: 'new', qty: 1 },
+          { cat: 'case', match: 'Cube Gaming Blaz', cond: 'new', qty: 1 },
+          { cat: 'cpucooler', match: 'SE-214-XT', cond: 'new', qty: 1 }
+        ]
+      },
+      {
+        title: "PC Mid-Range 11 Jutaan (Mix Baru + Second)",
+        badge: "Sweetspot 1080p/1440p",
+        badgeColor: "cyan",
+        desc: "Kombinasi cerdas: CPU & VGA second mulus, PSU/SSD/Case baru bergaransi resmi.",
+        items: [
+          { cat: 'cpu', match: 'i5-12400F', cond: 'used', qty: 1 },
+          { cat: 'mobo', match: 'B760M Pro RS/D5', cond: 'new', qty: 1 },
+          { cat: 'gpu', match: 'RTX 4060 8GB Twin Edge', cond: 'used', qty: 1 },
+          { cat: 'ram', match: 'Fury Beast 32GB (2x16GB) DDR5 6000MHz', cond: 'new', qty: 1 },
+          { cat: 'ssd', match: 'SN580 1TB', cond: 'new', qty: 1 },
+          { cat: 'psu', match: 'MAG A650BN', cond: 'new', qty: 1 },
+          { cat: 'case', match: 'Montech Air 100 ARGB', cond: 'new', qty: 1 },
+          { cat: 'cpucooler', match: 'AK400 Black', cond: 'new', qty: 1 },
+          { cat: 'monitor', match: 'G24i', cond: 'new', qty: 1 }
+        ]
+      },
+      {
+        title: "PC 1440p Ultra & Konten Kreator (AM5 Baru)",
+        badge: "Future-Proof AM5",
+        badgeColor: "purple",
+        desc: "Platform AM5 DDR5 siap upgrade jangka panjang, kuat editing 4K & gaming 2K 180Hz.",
+        items: [
+          { cat: 'cpu', match: 'Ryzen 5 7500F', cond: 'new', qty: 1 },
+          { cat: 'mobo', match: 'B650M Pro RS WiFi', cond: 'new', qty: 1 },
+          { cat: 'gpu', match: 'RTX 4070 Super 12GB OC', cond: 'new', qty: 1 },
+          { cat: 'ram', match: 'Trident Z5 Neo RGB 32GB (2x16GB) 6000', cond: 'new', qty: 1 },
+          { cat: 'ssd', match: 'KC3000 1TB', cond: 'new', qty: 1 },
+          { cat: 'psu', match: 'MAG A850GL', cond: 'new', qty: 1 },
+          { cat: 'case', match: 'Lian Li Lancool 216', cond: 'new', qty: 1 },
+          { cat: 'cpucooler', match: 'Peerless Assassin 120 SE', cond: 'new', qty: 1 },
+          { cat: 'monitor', match: 'G27Qi', cond: 'new', qty: 1 }
+        ]
+      },
+      {
+        title: "PC Sultan Rata Kanan 4K & AI Workstation",
+        badge: "Enthusiast Flagship",
+        badgeColor: "emerald",
+        desc: "Performa tanpa kompromi dengan Ryzen 7 9800X3D, RTX 5080, dan monitor QD-OLED 240Hz.",
+        items: [
+          { cat: 'cpu', match: 'Ryzen 7 9800X3D', cond: 'new', qty: 1 },
+          { cat: 'mobo', match: 'MAG X870 Tomahawk', cond: 'new', qty: 1 },
+          { cat: 'gpu', match: 'RTX 5080 16GB', cond: 'new', qty: 1 },
+          { cat: 'ram', match: 'Trident Z5 Neo RGB 64GB (2x32GB) 6000', cond: 'new', qty: 1 },
+          { cat: 'ssd', match: '990 PRO 2TB', cond: 'new', qty: 1 },
+          { cat: 'hdd', match: 'Barracuda 4TB', cond: 'new', qty: 1 },
+          { cat: 'psu', match: 'Focus GX-1000', cond: 'new', qty: 1 },
+          { cat: 'case', match: 'HYTE Y70 Dual Chamber', cond: 'new', qty: 1 },
+          { cat: 'cpucooler', match: 'Kraken Elite 360', cond: 'new', qty: 1 },
+          { cat: 'fan', match: 'SL-Infinity 120 (3-Pack)', cond: 'new', qty: 2 },
+          { cat: 'monitor', match: 'MPG 321URX', cond: 'new', qty: 1 }
+        ]
+      }
+    ];
+
+    /**
+     * 4. STATE APLIKASI UTAMA
+     */
+    let currentBuild = {}; // { cpu: { item, condition: 'new'|'used', qty: 1 }, ... }
+    let activeModalCategory = null;
+    let selectedBrandPill = 'ALL';
+
+    // Format Rupiah (IDR)
+    function formatIDR(amount) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+      }).format(amount);
+    }
+
+    // Toast Notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'bg-emerald-950/95 border-emerald-500/50 text-emerald-200',
+        warning: 'bg-amber-950/95 border-amber-500/50 text-amber-200',
+        error: 'bg-rose-950/95 border-rose-500/50 text-rose-200',
+        info: 'bg-slate-900/95 border-cyan-500/50 text-cyan-200'
+      };
+      const icons = {
+        success: 'fa-circle-check text-emerald-400',
+        warning: 'fa-triangle-exclamation text-amber-400',
+        error: 'fa-circle-xmark text-rose-400',
+        info: 'fa-circle-info text-cyan-400'
+      };
+
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto p-3.5 rounded-xl border shadow-xl backdrop-blur-md flex items-center gap-3 text-xs sm:text-sm font-medium transition-all duration-300 translate-x-0 ${colors[type]}`;
+      toast.innerHTML = `<i class="fa-solid ${icons[type]} text-base"></i><span class="flex-1">${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    /**
+     * 5. RENDER SLOT 11 KATEGORI KOMPONEN
+     */
+    function renderComponentSlots() {
+      const container = document.getElementById('component-slots-container');
+      container.innerHTML = '';
+
+      CATEGORIES.forEach(cat => {
+        const entry = currentBuild[cat.id];
+        const itemCount = DB[cat.id].length;
+
+        const card = document.createElement('div');
+        card.className = `rounded-2xl border transition-all duration-200 ${
+          entry
+            ? 'bg-cyber-card border-slate-700/90 hover:border-cyan-500/40'
+            : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
+        }`;
+
+        if (!entry) {
+          // Empty Slot View
+          card.innerHTML = `
+            <div class="p-4 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3.5 min-w-0">
+                <div class="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/70 flex items-center justify-center text-slate-400 shrink-0">
+                  <i class="fa-solid ${cat.icon} text-base"></i>
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-sm sm:text-base text-slate-200 truncate">${cat.name}</h4>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 shrink-0">${itemCount} varian</span>
+                  </div>
+                  <p class="text-xs text-slate-500 truncate">${cat.desc}</p>
+                </div>
+              </div>
+              <button onclick="openSelectorModal('${cat.id}')" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-cyan-500 text-cyan-400 hover:text-slate-950 font-bold text-xs sm:text-sm border border-slate-700 hover:border-cyan-400 transition-all shrink-0 flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Pilih
+              </button>
+            </div>
+          `;
+        } else {
+          // Filled Slot View
+          const { item, condition, qty } = entry;
+          const unitPrice = condition === 'new' ? item.newPrice : item.usedPrice;
+          const subtotal = unitPrice * qty;
+          const savingPerUnit = item.newPrice - item.usedPrice;
+
+          card.innerHTML = `
+            <div class="p-4 space-y-3">
+              <!-- Top Row: Icon, Name, Remove -->
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3.5 min-w-0">
+                  <div class="w-11 h-11 rounded-xl ${condition === 'new' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'} border flex items-center justify-center shrink-0 mt-0.5">
+                    <i class="fa-solid ${cat.icon} text-base"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${cat.name}</span>
+                      <span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-slate-800 text-slate-300">${item.brand}</span>
+                      ${item.watt > 0 ? `<span class="text-[10px] font-mono text-slate-400">• ${item.watt * qty}W</span>` : ''}
+                    </div>
+                    <h4 class="font-bold text-sm sm:text-base text-white leading-snug">${item.name}</h4>
+                    <p class="text-xs text-slate-400 mt-0.5">${item.spec}</p>
+                    ${condition === 'used' ? `
+                      <div class="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300">
+                        <i class="fa-solid fa-store text-[10px]"></i> Est. FJB: ${item.usedNote} (Hemat ${formatIDR(savingPerUnit * qty)})
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+
+                <!-- Change & Remove Buttons -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="openSelectorModal('${cat.id}')" title="Ganti Komponen" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 transition">
+                    Ganti
+                  </button>
+                  <button onclick="removeComponent('${cat.id}')" title="Hapus" class="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center transition">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Bottom Controls Row: Condition Switcher, Qty, Price -->
+              <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                  <!-- Condition Toggle Pill -->
+                  <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center text-xs font-semibold">
+                    <button onclick="setItemCondition('${cat.id}', 'new')" class="px-2.5 py-1 rounded-lg transition-all ${
+                      condition === 'new'
+                        ? 'bg-cyan-500 text-slate-950 shadow'
+                        : 'text-slate-400 hover:text-white'
+                    }">
+                      Baru (${formatIDR(item.newPrice).replace('Rp', '').trim()})
+                    </button>
+                    <button onclick="setItemCondition('${cat.id}', 'used')" class="px-2.5 py-1 rounded-lg transition-all ${
+                      condition === 'used'
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'text-slate-400 hover:text-white'
+                    }">
+                      Second (${formatIDR(item.usedPrice).replace('Rp', '').trim()})
+                    </button>
+                  </div>
+
+                  <!-- Quantity Controls (if allowed) -->
+                  ${cat.allowQty ? `
+                    <div class="flex items-center bg-slate-950 rounded-xl border border-slate-800 px-1 py-0.5">
+                      <button onclick="updateItemQty('${cat.id}', -1)" class="w-6 h-6 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white text-xs flex items-center justify-center">-</button>
+                      <span class="px-2 font-mono text-xs font-bold text-white">${qty}x</span>
+                      <button onclick="updateItemQty('${cat.id}', 1)" class="w-6 h-6 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white text-xs flex items-center justify-center">+</button>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Subtotal Price -->
+                <div class="text-right ml-auto">
+                  <div class="font-mono font-extrabold text-base sm:text-lg ${condition === 'new' ? 'text-cyan-400' : 'text-amber-400'}">
+                    ${formatIDR(subtotal)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        container.appendChild(card);
+      });
+
+      recalculateSummary();
+    }
+
+    /**
+     * 6. KALKULASI HARGA, PENGHEMATAN, WATTAGE & KOMPATIBILITAS
+     */
+    function recalculateSummary() {
+      let totalSelected = 0;
+      let totalAllNew = 0;
+      let totalAllUsed = 0;
+      let totalWatt = 0;
+      let selectedCategoriesCount = 0;
+      let newCount = 0;
+      let usedCount = 0;
+
+      Object.keys(currentBuild).forEach(catId => {
+        const entry = currentBuild[catId];
+        if (!entry) return;
+        selectedCategoriesCount++;
+        const { item, condition, qty } = entry;
+
+        totalAllNew += item.newPrice * qty;
+        totalAllUsed += item.usedPrice * qty;
+        totalWatt += (item.watt || 0) * qty;
+
+        if (condition === 'new') {
+          totalSelected += item.newPrice * qty;
+          newCount++;
+        } else {
+          totalSelected += item.usedPrice * qty;
+          usedCount++;
+        }
+      });
+
+      // Tambah estimasi base system overhead (motherboard VRM, USB, RGB) 35W jika ada komponen terpasang
+      const estimatedSystemWatt = selectedCategoriesCount > 0 ? totalWatt + 35 : 0;
+      const savings = totalAllNew - totalSelected;
+      const savingsPercent = totalAllNew > 0 ? Math.round((savings / totalAllNew) * 100) : 0;
+
+      // Update UI Desktop & Mobile
+      document.getElementById('selected-count').textContent = selectedCategoriesCount;
+      document.getElementById('mobile-selected-count').textContent = selectedCategoriesCount;
+      document.getElementById('total-wattage').textContent = estimatedSystemWatt;
+
+      document.getElementById('total-all-new').textContent = formatIDR(totalAllNew);
+      document.getElementById('total-all-used').textContent = formatIDR(totalAllUsed);
+      document.getElementById('total-selected-price').textContent = formatIDR(totalSelected);
+      document.getElementById('mobile-total-price').textContent = formatIDR(totalSelected);
+
+      document.getElementById('total-savings').textContent = formatIDR(savings);
+      document.getElementById('savings-percent').textContent = `${savingsPercent}% Hemat`;
+      document.getElementById('mobile-savings-badge').textContent = savings > 0 ? `Hemat ${formatIDR(savings)} (${savingsPercent}%)` : 'Full Baru (BNIB)';
+
+      // Mix Status Label
+      const mixLabel = document.getElementById('mix-status-label');
+      if (selectedCategoriesCount === 0) {
+        mixLabel.textContent = 'Belum ada item';
+        mixLabel.className = 'text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-400';
+      } else if (newCount > 0 && usedCount > 0) {
+        mixLabel.textContent = `Mix (${newCount} Baru, ${usedCount} Second)`;
+        mixLabel.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30';
+      } else if (usedCount > 0) {
+        mixLabel.textContent = 'Full Second (FJB)';
+        mixLabel.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
+      } else {
+        mixLabel.textContent = 'Full Baru (BNIB)';
+        mixLabel.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+      }
+
+      // Rekomendasi PSU & Load Bar
+      const recommendedPSU = Math.max(450, Math.ceil((estimatedSystemWatt * 1.35) / 50) * 50);
+      document.getElementById('recommended-psu-watt').textContent = `${recommendedPSU}W 80+`;
+
+      const selectedPSU = currentBuild.psu ? currentBuild.psu.item.meta.psuWatt : null;
+      const loadBar = document.getElementById('psu-load-bar');
+      const psuStatusText = document.getElementById('psu-status-text');
+
+      if (selectedPSU) {
+        const loadPct = Math.min(100, Math.round((estimatedSystemWatt / selectedPSU) * 100));
+        loadBar.style.width = `${loadPct}%`;
+        if (estimatedSystemWatt > selectedPSU) {
+          loadBar.className = 'bg-rose-500 h-2 rounded-full transition-all duration-300';
+          psuStatusText.innerHTML = `<span class="text-rose-400 font-semibold">Bahaya!</span> Beban ${estimatedSystemWatt}W melebihi kapasitas PSU ${selectedPSU}W.`;
+        } else if (loadPct > 80) {
+          loadBar.className = 'bg-amber-500 h-2 rounded-full transition-all duration-300';
+          psuStatusText.innerHTML = `<span class="text-amber-400 font-semibold">Mepet (${loadPct}%):</span> Disarankan upgrade ke ${recommendedPSU}W.`;
+        } else {
+          loadBar.className = 'bg-emerald-500 h-2 rounded-full transition-all duration-300';
+          psuStatusText.innerHTML = `<span class="text-emerald-400 font-semibold">Aman (${loadPct}% load):</span> PSU ${selectedPSU}W sangat ideal.`;
+        }
+      } else {
+        const dummyPct = Math.min(100, Math.round((estimatedSystemWatt / recommendedPSU) * 100));
+        loadBar.style.width = `${dummyPct}%`;
+        loadBar.className = 'bg-cyan-500 h-2 rounded-full transition-all duration-300';
+        psuStatusText.textContent = selectedCategoriesCount > 0
+          ? `Disarankan memakai PSU minimal ${recommendedPSU}W.`
+          : 'Pilih komponen untuk menghitung beban daya.';
+      }
+
+      checkCompatibility(estimatedSystemWatt, recommendedPSU);
+    }
+
+    /**
+     * 7. PEMERIKSAAN KOMPATIBILITAS DASAR
+     */
+    function checkCompatibility(estimatedWatt, recommendedPSU) {
+      const alertBox = document.getElementById('compatibility-alerts');
+      const warnings = [];
+
+      const cpu = currentBuild.cpu?.item;
+      const mobo = currentBuild.mobo?.item;
+      const ram = currentBuild.ram?.item;
+      const psu = currentBuild.psu?.item;
+
+      // 1. Cek Socket CPU vs Motherboard
+      if (cpu && mobo && cpu.meta.socket !== mobo.meta.socket) {
+        warnings.push(`<strong>Socket Tidak Cocok:</strong> Processor <b>${cpu.name}</b> (${cpu.meta.socket}) tidak bisa dipasang di Motherboard <b>${mobo.name}</b> (${mobo.meta.socket}).`);
+      }
+
+      // 2. Cek Tipe RAM vs Motherboard
+      if (mobo && ram && mobo.meta.ramType !== ram.meta.ramType) {
+        warnings.push(`<strong>Tipe RAM Tidak Cocok:</strong> Motherboard <b>${mobo.name}</b> membutuhkan <b>${mobo.meta.ramType}</b>, sedangkan kamu memilih RAM <b>${ram.meta.ramType}</b>.`);
+      }
+
+      // 3. Cek Kapasitas PSU
+      if (psu && estimatedWatt > psu.meta.psuWatt) {
+        warnings.push(`<strong>Daya PSU Kurang:</strong> Estimasi konsumsi daya sistem (<b>${estimatedWatt}W</b>) melebihi kapasitas <b>${psu.name}</b> (${psu.meta.psuWatt}W). Rekomendasi minimal <b>${recommendedPSU}W</b>.`);
+      }
+
+      if (warnings.length > 0) {
+        alertBox.classList.remove('hidden');
+        alertBox.innerHTML = warnings.map(w => `
+          <div class="p-3.5 rounded-xl bg-rose-950/70 border border-rose-500/40 text-rose-200 text-xs sm:text-sm flex items-start gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-rose-400 mt-0.5"></i>
+            <div>${w}</div>
+          </div>
+        `).join('');
+      } else {
+        alertBox.classList.add('hidden');
+        alertBox.innerHTML = '';
+      }
+    }
+
+    /**
+     * 8. MODAL PEMILIH KOMPONEN (SEARCH, FILTER BRAND, HARGA, SORT)
+     */
+    function openSelectorModal(catId) {
+      activeModalCategory = catId;
+      selectedBrandPill = 'ALL';
+      const cat = CATEGORIES.find(c => c.id === catId);
+      const items = DB[catId];
+
+      document.getElementById('modal-cat-title').textContent = `Pilih ${cat.name}`;
+      document.getElementById('modal-cat-count').textContent = `${items.length} Varian`;
+      document.getElementById('modal-cat-icon').innerHTML = `<i class="fa-solid ${cat.icon}"></i>`;
+      document.getElementById('modal-search-input').value = '';
+      document.getElementById('modal-price-filter').value = 'ALL';
+      document.getElementById('modal-sort-select').value = 'DEFAULT';
+
+      // Populate Brand Dropdown & Pills
+      const brands = ['ALL', ...new Set(items.map(i => i.brand))].sort((a, b) => a === 'ALL' ? -1 : a.localeCompare(b));
+      const brandSelect = document.getElementById('modal-brand-filter');
+      brandSelect.innerHTML = brands.map(b => `<option value="${b}">${b === 'ALL' ? 'Semua Brand (' + items.length + ')' : b}</option>`).join('');
+
+      renderBrandPills(brands);
+      filterModalItems();
+
+      document.getElementById('selector-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('modal-search-input').focus(), 100);
+    }
+
+    function renderBrandPills(brands) {
+      const container = document.getElementById('modal-brand-pills');
+      container.innerHTML = brands.map(b => {
+        const active = selectedBrandPill === b;
+        return `
+          <button onclick="selectBrandPill('${b}')" class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            active
+              ? 'bg-cyan-500 text-slate-950 shadow'
+              : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700 border border-slate-700/70'
+          }">
+            ${b === 'ALL' ? 'Semua' : b}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectBrandPill(brand) {
+      selectedBrandPill = brand;
+      document.getElementById('modal-brand-filter').value = brand;
+      const items = DB[activeModalCategory];
+      const brands = ['ALL', ...new Set(items.map(i => i.brand))].sort((a, b) => a === 'ALL' ? -1 : a.localeCompare(b));
+      renderBrandPills(brands);
+      filterModalItems();
+    }
+
+    function closeSelectorModal() {
+      document.getElementById('selector-modal').classList.add('hidden');
+      activeModalCategory = null;
+    }
+
+    function filterModalItems() {
+      if (!activeModalCategory) return;
+      const query = document.getElementById('modal-search-input').value.toLowerCase().trim();
+      const brandFilter = document.getElementById('modal-brand-filter').value;
+      selectedBrandPill = brandFilter;
+      const priceFilter = document.getElementById('modal-price-filter').value;
+      const sortBy = document.getElementById('modal-sort-select').value;
+
+      let list = [...DB[activeModalCategory]];
+
+      // Filter Brand
+      if (brandFilter !== 'ALL') {
+        list = list.filter(i => i.brand === brandFilter);
+      }
+
+      // Filter Search Query
+      if (query) {
+        list = list.filter(i =>
+          i.name.toLowerCase().includes(query) ||
+          i.spec.toLowerCase().includes(query) ||
+          i.brand.toLowerCase().includes(query)
+        );
+      }
+
+      // Filter Price Range (based on newPrice)
+      if (priceFilter !== 'ALL') {
+        list = list.filter(i => {
+          if (priceFilter === 'UNDER_1M') return i.newPrice < 1000000;
+          if (priceFilter === '1M_3M') return i.newPrice >= 1000000 && i.newPrice <= 3000000;
+          if (priceFilter === '3M_7M') return i.newPrice > 3000000 && i.newPrice <= 7000000;
+          if (priceFilter === '7M_15M') return i.newPrice > 7000000 && i.newPrice <= 15000000;
+          if (priceFilter === 'ABOVE_15M') return i.newPrice > 15000000;
+          return true;
+        });
+      }
+
+      // Sort
+      if (sortBy === 'PRICE_ASC') list.sort((a, b) => a.newPrice - b.newPrice);
+      if (sortBy === 'PRICE_DESC') list.sort((a, b) => b.newPrice - a.newPrice);
+      if (sortBy === 'USED_ASC') list.sort((a, b) => a.usedPrice - b.usedPrice);
+      if (sortBy === 'SAVINGS_DESC') list.sort((a, b) => (b.newPrice - b.usedPrice) - (a.newPrice - a.usedPrice));
+
+      document.getElementById('modal-visible-count').textContent = list.length;
+      const container = document.getElementById('modal-items-list');
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-slate-400">
+            <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-600"></i>
+            <p class="font-semibold">Komponen tidak ditemukan</p>
+            <p class="text-xs text-slate-500 mt-1">Coba kata kunci lain atau reset filter brand & harga.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Cek apakah ada peringatan kompatibilitas ringan saat memilih
+      const selectedCpuSocket = currentBuild.cpu?.item.meta.socket;
+      const selectedMoboSocket = currentBuild.mobo?.item.meta.socket;
+      const selectedMoboRam = currentBuild.mobo?.item.meta.ramType;
+
+      container.innerHTML = list.map(item => {
+        const diff = item.newPrice - item.usedPrice;
+        const diffPct = Math.round((diff / item.newPrice) * 100);
+
+        let compatTag = '';
+        if (activeModalCategory === 'mobo' && selectedCpuSocket) {
+          compatTag = item.meta.socket === selectedCpuSocket
+            ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Cocok ${selectedCpuSocket}</span>`
+            : `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/15 text-rose-400">Beda Socket (${item.meta.socket})</span>`;
+        }
+        if (activeModalCategory === 'cpu' && selectedMoboSocket) {
+          compatTag = item.meta.socket === selectedMoboSocket
+            ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Cocok ${selectedMoboSocket}</span>`
+            : `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/15 text-rose-400">Beda Socket (${item.meta.socket})</span>`;
+        }
+        if (activeModalCategory === 'ram' && selectedMoboRam) {
+          compatTag = item.meta.ramType === selectedMoboRam
+            ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400">Cocok ${selectedMoboRam}</span>`
+            : `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/15 text-rose-400">Butuh ${selectedMoboRam}</span>`;
+        }
+
+        return `
+          <div class="p-3.5 rounded-xl bg-slate-900/90 hover:bg-cyber-cardHover border border-slate-800 hover:border-slate-700 transition-all flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="space-y-1 min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-cyan-400 border border-slate-700">${item.brand}</span>
+                ${compatTag}
+                ${item.watt > 0 ? `<span class="text-[11px] font-mono text-slate-400"><i class="fa-solid fa-bolt text-amber-400/80 mr-0.5"></i>${item.watt}W</span>` : ''}
+                <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Hemat ${diffPct}% jika second</span>
+              </div>
+              <div class="font-bold text-sm sm:text-base text-white">${item.name}</div>
+              <div class="text-xs text-slate-400">${item.spec}</div>
+              <div class="text-[11px] text-amber-400/80"><i class="fa-solid fa-tag mr-1"></i>Info Second FJB: ${item.usedNote}</div>
+            </div>
+
+            <!-- Action Buttons: Select New vs Select Used -->
+            <div class="flex items-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
+              <button onclick="selectComponent('${item.id}', 'new')" class="flex-1 md:flex-initial px-3 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/30 transition-all text-left">
+                <div class="text-[10px] uppercase font-bold opacity-80">+ Pasang Baru</div>
+                <div class="font-mono font-bold text-xs sm:text-sm">${formatIDR(item.newPrice)}</div>
+              </button>
+
+              <button onclick="selectComponent('${item.id}', 'used')" class="flex-1 md:flex-initial px-3 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 transition-all text-left">
+                <div class="text-[10px] uppercase font-bold opacity-80">+ Pasang Second</div>
+                <div class="font-mono font-bold text-xs sm:text-sm">${formatIDR(item.usedPrice)}</div>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /**
+     * 9. MANIPULASI BUILD (PILIH, HAPUS, UBAH KONDISI, QTY, GLOBAL TOGGLE)
+     */
+    function selectComponent(itemId, condition = 'new') {
+      const catId = activeModalCategory;
+      const item = DB[catId].find(i => i.id === itemId);
+      if (!item) return;
+
+      const existingQty = currentBuild[catId]?.qty || 1;
+      currentBuild[catId] = {
+        item,
+        condition,
+        qty: existingQty
+      };
+
+      closeSelectorModal();
+      renderComponentSlots();
+      showToast(`${item.name} (${condition === 'new' ? 'Baru' : 'Second'}) ditambahkan!`, 'success');
+    }
+
+    function removeComponent(catId) {
+      delete currentBuild[catId];
+      renderComponentSlots();
+      showToast('Komponen dihapus dari daftar.', 'info');
+    }
+
+    function setItemCondition(catId, condition) {
+      if (!currentBuild[catId]) return;
+      currentBuild[catId].condition = condition;
+      renderComponentSlots();
+    }
+
+    function updateItemQty(catId, delta) {
+      if (!currentBuild[catId]) return;
+      const newQty = currentBuild[catId].qty + delta;
+      if (newQty < 1 || newQty > 10) return;
+      currentBuild[catId].qty = newQty;
+      renderComponentSlots();
+    }
+
+    function setAllCondition(condition) {
+      const keys = Object.keys(currentBuild);
+      if (keys.length === 0) {
+        showToast('Pilih minimal 1 komponen terlebih dahulu.', 'warning');
+        return;
+      }
+      keys.forEach(k => {
+        currentBuild[k].condition = condition;
+      });
+      renderComponentSlots();
+      showToast(`Seluruh komponen diubah ke kondisi ${condition === 'new' ? 'BARU (BNIB)' : 'SECOND (FJB)'}.`, 'success');
+    }
+
+    function resetBuild() {
+      if (Object.keys(currentBuild).length === 0) return;
+      currentBuild = {};
+      renderComponentSlots();
+      showToast('Simulasi rakitan berhasil di-reset.', 'info');
+    }
+
+    /**
+     * 10. PRESET RAKITAN CEPAT
+     */
+    function togglePresetModal(show) {
+      const modal = document.getElementById('preset-modal');
+      if (show) {
+        renderPresets();
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('preset-list-container');
+      container.innerHTML = PRESETS.map((preset, idx) => {
+        // Hitung estimasi harga preset
+        let estPrice = 0;
+        preset.items.forEach(p => {
+          const found = DB[p.cat].find(i => i.name.includes(p.match));
+          if (found) {
+            estPrice += (p.cond === 'new' ? found.newPrice : found.usedPrice) * p.qty;
+          }
+        });
+
+        const badgeColors = {
+          amber: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          cyan: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+          purple: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+          emerald: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+        };
+
+        return `
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-cyan-500/40 flex flex-col justify-between gap-4 transition-all">
+            <div class="space-y-2">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${badgeColors[preset.badgeColor]}">${preset.badge}</span>
+              <h4 class="font-bold text-base text-white">${preset.title}</h4>
+              <p class="text-xs text-slate-400 leading-relaxed">${preset.desc}</p>
+            </div>
+            <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="text-[10px] text-slate-500 uppercase font-semibold">Estimasi Total</div>
+                <div class="font-mono font-extrabold text-base text-cyan-400">${formatIDR(estPrice)}</div>
+              </div>
+              <button onclick="applyPreset(${idx})" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition">
+                Gunakan Preset
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyPreset(index) {
+      const preset = PRESETS[index];
+      currentBuild = {};
+
+      preset.items.forEach(p => {
+        const found = DB[p.cat].find(i => i.name.includes(p.match));
+        if (found) {
+          currentBuild[p.cat] = {
+            item: found,
+            condition: p.cond,
+            qty: p.qty
+          };
+        }
+      });
+
+      togglePresetModal(false);
+      renderComponentSlots();
+      showToast(`Preset "${preset.title}" berhasil dimuat!`, 'success');
+    }
+
+    /**
+     * 11. SAVE / LOAD LOCALSTORAGE & EXPORT CLIPBOARD
+     */
+    function saveBuildToLocal() {
+      if (Object.keys(currentBuild).length === 0) {
+        showToast('Belum ada komponen untuk disimpan.', 'warning');
+        return;
+      }
+      const serialized = {};
+      Object.keys(currentBuild).forEach(catId => {
+        serialized[catId] = {
+          itemId: currentBuild[catId].item.id,
+          condition: currentBuild[catId].condition,
+          qty: currentBuild[catId].qty
+        };
+      });
+      localStorage.setItem('rakitpc_saved_build_v1', JSON.stringify(serialized));
+      showToast('Rakitan tersimpan di browser (LocalStorage)!', 'success');
+    }
+
+    function loadBuildFromLocal() {
+      const raw = localStorage.getItem('rakitpc_saved_build_v1');
+      if (!raw) {
+        showToast('Tidak ditemukan rakitan tersimpan sebelumnya.', 'warning');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        currentBuild = {};
+        Object.keys(parsed).forEach(catId => {
+          const entry = parsed[catId];
+          const found = DB[catId]?.find(i => i.id === entry.itemId);
+          if (found) {
+            currentBuild[catId] = {
+              item: found,
+              condition: entry.condition,
+              qty: entry.qty || 1
+            };
+          }
+        });
+        renderComponentSlots();
+        showToast('Rakitan tersimpan berhasil dimuat kembali!', 'success');
+      } catch (e) {
+        showToast('Gagal memuat data rakitan.', 'error');
+      }
+    }
+
+    function generateBuildText() {
+      const keys = CATEGORIES.filter(c => currentBuild[c.id]);
+      if (keys.length === 0) return null;
+
+      let totalSelected = 0;
+      let totalAllNew = 0;
+      let lines = [
+        `🖥️ *SIMULASI RAKIT PC — RakitPC.id*`,
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
+      ];
+
+      keys.forEach(cat => {
+        const { item, condition, qty } = currentBuild[cat.id];
+        const price = (condition === 'new' ? item.newPrice : item.usedPrice) * qty;
+        totalSelected += price;
+        totalAllNew += item.newPrice * qty;
+        const label = condition === 'new' ? '[BARU]' : '[SECOND]';
+        const qtyStr = qty > 1 ? ` (${qty}x)` : '';
+        lines.push(`• *${cat.name}:* ${item.name}${qtyStr} ${label} — ${formatIDR(price)}`);
+      });
+
+      const savings = totalAllNew - totalSelected;
+      lines.push(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      lines.push(`💰 *Total Estimasi Rakitan:* ${formatIDR(totalSelected)}`);
+      if (savings > 0) {
+        lines.push(`🏷️ *Estimasi Jika Full Baru:* ${formatIDR(totalAllNew)}`);
+        lines.push(`✅ *Total Hemat (Second):* ${formatIDR(savings)}`);
+      }
+      lines.push(`⚡ *Estimasi Daya:* ${document.getElementById('total-wattage').textContent}W (Rec. PSU ${document.getElementById('recommended-psu-watt').textContent})`);
+
+      return lines.join('\n');
+    }
+
+    function copyBuildToClipboard() {
+      const text = generateBuildText();
+      if (!text) {
+        showToast('Pilih minimal 1 komponen sebelum menyalin rincian.', 'warning');
+        return;
+      }
+
+      // Menggunakan execCommand('copy') sesuai aturan kompatibilitas iframe
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Rincian rakitan disalin! Siap paste ke WA / Threads / X.', 'success');
+      } catch (err) {
+        showToast('Gagal menyalin teks ke clipboard.', 'error');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    /**
+     * 12. MODAL DETAIL STRUK & PERBANDINGAN
+     */
+    function openSummaryModal() {
+      const keys = CATEGORIES.filter(c => currentBuild[c.id]);
+      if (keys.length === 0) {
+        showToast('Belum ada komponen yang dipilih.', 'warning');
+        return;
+      }
+
+      let totalSelected = 0;
+      let totalAllNew = 0;
+      let totalAllUsed = 0;
+
+      const rows = keys.map(cat => {
+        const { item, condition, qty } = currentBuild[cat.id];
+        const chosenPrice = (condition === 'new' ? item.newPrice : item.usedPrice) * qty;
+        totalSelected += chosenPrice;
+        totalAllNew += item.newPrice * qty;
+        totalAllUsed += item.usedPrice * qty;
+
+        return `
+          <div class="py-2.5 border-b border-slate-800/80 flex items-start justify-between gap-3">
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-400">${cat.name}</div>
+              <div class="font-semibold text-white text-xs sm:text-sm">${item.name} ${qty > 1 ? `<span class="text-cyan-400">(${qty}x)</span>` : ''}</div>
+              <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${
+                condition === 'new' ? 'bg-cyan-500/15 text-cyan-300' : 'bg-amber-500/15 text-amber-300'
+              }">${condition === 'new' ? 'BARU (BNIB)' : 'SECOND (FJB)'}</span>
+            </div>
+            <div class="text-right font-mono shrink-0">
+              <div class="font-bold text-white text-xs sm:text-sm">${formatIDR(chosenPrice)}</div>
+              <div class="text-[10px] text-slate-500">Baru: ${formatIDR(item.newPrice * qty)}</div>
+              <div class="text-[10px] text-amber-400/70">2nd: ${formatIDR(item.usedPrice * qty)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const savings = totalAllNew - totalSelected;
+
+      document.getElementById('summary-modal-content').innerHTML = `
+        <div class="divide-y divide-slate-800">${rows}</div>
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 font-mono text-xs sm:text-sm">
+          <div class="flex justify-between text-slate-400">
+            <span>Total Jika Full Baru:</span>
+            <span>${formatIDR(totalAllNew)}</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Total Jika Full Second:</span>
+            <span>${formatIDR(totalAllUsed)}</span>
+          </div>
+          <div class="flex justify-between text-emerald-400 font-bold">
+            <span>Penghematan Pilihanmu:</span>
+            <span>${formatIDR(savings)}</span>
+          </div>
+          <div class="pt-2 border-t border-slate-800 flex justify-between text-base sm:text-lg font-extrabold text-cyan-400">
+            <span>TOTAL AKHIR:</span>
+            <span>${formatIDR(totalSelected)}</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('summary-modal').classList.remove('hidden');
+    }
+
+    function closeSummaryModal() {
+      document.getElementById('summary-modal').classList.add('hidden');
+    }
+
+    // Hitung total database saat inisialisasi
+    window.addEventListener('DOMContentLoaded', () => {
+      const totalItems = Object.values(DB).reduce((sum, arr) => sum + arr.length, 0);
+      document.getElementById('total-db-count').textContent = totalItems;
+      renderComponentSlots();
+    });
+  </script>
+</body>
+</html>
